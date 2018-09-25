@@ -4,6 +4,8 @@ import { Link, Route, Switch } from 'react-router-dom'
 import Tags from './components/statistikkbanken/tags/Tags'
 import QueryBuilder from './components/statistikkbanken/queryBuilder/QueryBuilder'
 import VariableExtractor from './components/statistikkbanken/variableExtractor/VariableExtractor'
+import StatistikkbankenTags from './components/tags/StatistikkbankenTags'
+import Article from './components/artikkel/Article'
 
 const notFound = ({location}) => {
   const content = '\'' + location.pathname + '\' finnes ikke'
@@ -40,6 +42,11 @@ class App extends Component {
                     Hente variabler
                   </Link>
                 </Menu.Item>
+                <Menu.Item>
+                  <Link to='/artikkel'>
+                    Artikler
+                  </Link>
+                </Menu.Item>
               </Menu>
             </Segment>
           </Grid.Column>
@@ -53,6 +60,10 @@ class App extends Component {
               <Route path='/queryBuilder' exact component={QueryBuilder} />
 
               <Route path='/variableExtractor' exact component={VariableExtractor} />
+
+              <Route path='/datasetList' exact component={StatistikkbankenTags} />
+      
+              <Route path='/artikkel' exact component={Article} />
 
               <Route component={notFound} />
             </Switch>
