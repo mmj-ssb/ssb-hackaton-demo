@@ -4,7 +4,7 @@ import { Link, Route, Switch } from 'react-router-dom'
 import Tags from './components/statistikkbanken/tags/Tags'
 import QueryBuilder from './components/statistikkbanken/queryBuilder/QueryBuilder'
 import VariableExtractor from './components/statistikkbanken/variableExtractor/VariableExtractor'
-import StatistikkbankenTags from './components/tags/StatistikkbankenTags'
+import StatistikkbankenTags from './components/statistikkbanken/tags/Tags'
 import Analyzer from './components/textanalyze/Analyzer'
 import Article from './components/artikkel/Article'
 
