@@ -4,10 +4,12 @@
   "private": true,
   "dependencies": {
     "axios": "^0.18.0",
+    "diffbot": "^1.0.3",
     "react": "^16.5.2",
     "react-dom": "^16.5.2",
     "react-router-dom": "^4.3.1",
     "react-scripts": "1.1.5",
+    "react-table": "^6.8.6",
     "semantic-ui-css": "^2.4.0",
     "semantic-ui-react": "^0.82.5"
   },
