@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Container, Grid, Menu, Message, Segment } from 'semantic-ui-react'
 import { Link, Route, Switch } from 'react-router-dom'
 import StatistikkbankenTags from './components/tags/StatistikkbankenTags'
+import Analyzer from './components/textanalyze/Analyzer'
 
 const notFound = ({location}) => {
   const content = '\'' + location.pathname + '\' finnes ikke'
@@ -23,7 +24,12 @@ class App extends Component {
               <Menu fluid vertical>
                 <Menu.Item>
                   <Link to='/datasetList'>
-                    Datasetliste fra SB
+                    Datasetliste fra SSB
+                  </Link>
+                </Menu.Item>
+                <Menu.Item>
+                  <Link to='/analyzer'>
+                    Tekstanalyse
                   </Link>
                 </Menu.Item>
               </Menu>
@@ -35,6 +41,8 @@ class App extends Component {
               <Route path='/' exact />
 
               <Route path='/datasetList' exact component={StatistikkbankenTags} />
+
+              <Route path='/analyzer' exact component={Analyzer} />
 
               <Route component={notFound} />
             </Switch>
