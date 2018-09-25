@@ -1,7 +1,9 @@
 import React, { Component } from 'react'
 import { Container, Grid, Menu, Message, Segment } from 'semantic-ui-react'
 import { Link, Route, Switch } from 'react-router-dom'
-import StatistikkbankenTags from './components/tags/StatistikkbankenTags'
+import Tags from './components/statistikkbanken/tags/Tags'
+import QueryBuilder from './components/statistikkbanken/queryBuilder/QueryBuilder'
+import VariableExtractor from './components/statistikkbanken/variableExtractor/VariableExtractor'
 
 const notFound = ({location}) => {
   const content = '\'' + location.pathname + '\' finnes ikke'
@@ -23,7 +25,19 @@ class App extends Component {
               <Menu fluid vertical>
                 <Menu.Item>
                   <Link to='/datasetList'>
-                    Datasetliste fra SB
+                    Datasetliste
+                  </Link>
+                </Menu.Item>
+
+                <Menu.Item>
+                  <Link to='/queryBuilder'>
+                    Spørringsbygger
+                  </Link>
+                </Menu.Item>
+
+                <Menu.Item>
+                  <Link to='/variableExtractor'>
+                    Hente variabler
                   </Link>
                 </Menu.Item>
               </Menu>
@@ -34,7 +48,11 @@ class App extends Component {
             <Switch>
               <Route path='/' exact />
 
-              <Route path='/datasetList' exact component={StatistikkbankenTags} />
+              <Route path='/datasetList' exact component={Tags} />
+
+              <Route path='/queryBuilder' exact component={QueryBuilder} />
+
+              <Route path='/variableExtractor' exact component={VariableExtractor} />
 
               <Route component={notFound} />
             </Switch>
