@@ -8,7 +8,7 @@ const notFound = ({location}) => {
 
   return (
     <Segment basic>
-      <Message error icon='warning' header={'Not Found'} content={content} />
+      <Message error icon='warning' header={'Finner ikke'} content={content} />
     </Segment>
   )
 }
