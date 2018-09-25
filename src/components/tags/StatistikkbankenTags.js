@@ -1,6 +1,6 @@
 import React from 'react'
 import axios from 'axios'
-import { Button } from 'semantic-ui-react'
+import { Button, Segment } from 'semantic-ui-react'
 
 class StatistikkbankenTags extends React.Component {
   constructor (props) {
@@ -27,11 +27,11 @@ class StatistikkbankenTags extends React.Component {
     const {ready} = this.state
 
     return(
-      <div>
+      <Segment basic>
         {ready && <div>Klart</div>}
 
         <Button color='pink' content='Sjekk state' onClick={this.handleCheckState} />
-      </div>
+      </Segment>
     )
   }
 }
