@@ -35,7 +35,6 @@ class App extends Component {
                 <Menu.Item>
                   <Link to='/analyzer'>
                     Tekstanalyse
-                    Datasetliste
                   </Link>
                 </Menu.Item>
 
