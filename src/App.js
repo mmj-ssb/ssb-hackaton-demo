@@ -5,6 +5,7 @@ import Tags from './components/statistikkbanken/tags/Tags'
 import QueryBuilder from './components/statistikkbanken/queryBuilder/QueryBuilder'
 import VariableExtractor from './components/statistikkbanken/variableExtractor/VariableExtractor'
 import StatistikkbankenTags from './components/tags/StatistikkbankenTags'
+import Analyzer from './components/textanalyze/Analyzer'
 import Article from './components/artikkel/Article'
 
 const notFound = ({location}) => {
@@ -27,6 +28,13 @@ class App extends Component {
               <Menu fluid vertical>
                 <Menu.Item>
                   <Link to='/datasetList'>
+                    Datasetliste fra SSB
+                  </Link>
+                </Menu.Item>
+      
+                <Menu.Item>
+                  <Link to='/analyzer'>
+                    Tekstanalyse
                     Datasetliste
                   </Link>
                 </Menu.Item>
@@ -64,6 +72,8 @@ class App extends Component {
               <Route path='/datasetList' exact component={StatistikkbankenTags} />
       
               <Route path='/artikkel' exact component={Article} />
+
+              <Route path='/analyzer' exact component={Analyzer} />
 
               <Route component={notFound} />
             </Switch>
