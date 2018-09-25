@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Container, Grid, Menu, Message, Segment } from 'semantic-ui-react'
 import { Link, Route, Switch } from 'react-router-dom'
 import StatistikkbankenTags from './components/tags/StatistikkbankenTags'
+import Article from './components/artikkel/Article'
 
 const notFound = ({location}) => {
   const content = '\'' + location.pathname + '\' finnes ikke'
@@ -26,6 +27,11 @@ class App extends Component {
                     Datasetliste fra SB
                   </Link>
                 </Menu.Item>
+                <Menu.Item>
+                  <Link to='/artikkel'>
+                    Artikler
+                  </Link>
+                </Menu.Item>
               </Menu>
             </Segment>
           </Grid.Column>
@@ -35,7 +41,7 @@ class App extends Component {
               <Route path='/' exact />
 
               <Route path='/datasetList' exact component={StatistikkbankenTags} />
-
+              <Route path='/artikkel' exact component={Article} />
               <Route component={notFound} />
             </Switch>
           </Grid.Column>
