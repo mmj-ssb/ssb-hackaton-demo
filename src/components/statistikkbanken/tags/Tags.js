@@ -2,7 +2,7 @@ import React from 'react'
 import axios from 'axios'
 import { Button, Segment } from 'semantic-ui-react'
 
-class StatistikkbankenTags extends React.Component {
+class Tags extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
@@ -13,7 +13,10 @@ class StatistikkbankenTags extends React.Component {
 
   componentDidMount () {
     axios.get('http://data.ssb.no/api/v0/dataset/list.json?lang=no').then(response => {
-      this.setState({datasetList: response.data, ready: true})
+      this.setState({
+        datasetList: response.data,
+        ready: true
+      })
     }).catch(error => {
       console.log(error)
     })
@@ -26,14 +29,12 @@ class StatistikkbankenTags extends React.Component {
   render () {
     const {ready} = this.state
 
-    return(
+    return (
       <Segment basic>
-        {ready && <div>Klart</div>}
-
-        <Button color='pink' content='Sjekk state' onClick={this.handleCheckState} />
+        <Button disabled={!ready} color='pink' content='Sjekk state' onClick={this.handleCheckState} />
       </Segment>
     )
   }
 }
 
-export default StatistikkbankenTags
+export default Tags

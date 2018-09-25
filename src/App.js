@@ -1,6 +1,9 @@
 import React, { Component } from 'react'
 import { Container, Grid, Menu, Message, Segment } from 'semantic-ui-react'
 import { Link, Route, Switch } from 'react-router-dom'
+import Tags from './components/statistikkbanken/tags/Tags'
+import QueryBuilder from './components/statistikkbanken/queryBuilder/QueryBuilder'
+import VariableExtractor from './components/statistikkbanken/variableExtractor/VariableExtractor'
 import StatistikkbankenTags from './components/tags/StatistikkbankenTags'
 import Article from './components/artikkel/Article'
 
@@ -24,7 +27,19 @@ class App extends Component {
               <Menu fluid vertical>
                 <Menu.Item>
                   <Link to='/datasetList'>
-                    Datasetliste fra SB
+                    Datasetliste
+                  </Link>
+                </Menu.Item>
+
+                <Menu.Item>
+                  <Link to='/queryBuilder'>
+                    Spørringsbygger
+                  </Link>
+                </Menu.Item>
+
+                <Menu.Item>
+                  <Link to='/variableExtractor'>
+                    Hente variabler
                   </Link>
                 </Menu.Item>
                 <Menu.Item>
@@ -40,8 +55,16 @@ class App extends Component {
             <Switch>
               <Route path='/' exact />
 
+              <Route path='/datasetList' exact component={Tags} />
+
+              <Route path='/queryBuilder' exact component={QueryBuilder} />
+
+              <Route path='/variableExtractor' exact component={VariableExtractor} />
+
               <Route path='/datasetList' exact component={StatistikkbankenTags} />
+      
               <Route path='/artikkel' exact component={Article} />
+
               <Route component={notFound} />
             </Switch>
           </Grid.Column>
