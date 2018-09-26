@@ -1,7 +1,8 @@
 import React from 'react'
-import { Divider, Segment } from 'semantic-ui-react'
+import { Divider, Segment, Button, Header, Image, Modal } from 'semantic-ui-react'
 import ReactTable from 'react-table'
 import 'react-table/react-table.css'
+
 
 let Diffbot = require('diffbot').Diffbot
 
@@ -26,9 +27,20 @@ class Article extends React.Component {
     super(props)
     this.state = {
       articles: '',
-      selectedArticle: {},
-      loading: false
+      selectedArticle: '',
+      loading: false,
+      articleOpen: false
     }
+
+    this.getStatisticsTable = this.getStatisticsTable.bind(this)
+  }
+
+  showArticle = () => {
+    this.setState({articleOpen: true})
+  }
+
+  closeArticle = () => {
+    this.setState({open: false})
   }
 
   componentWillMount() {
@@ -38,21 +50,32 @@ class Article extends React.Component {
   }
 
   selectArticle(e, state, column, rowInfo, instance) {
+    this.showArticle(true)
     this.setState({
       loading: true
     })
-    let self = this;
-    diffBot.article({uri: this.state.articles[0][rowInfo.index]}, function(err, response) {
+
+    this.setState({
+      selectedArticle: rowInfo.original,
+      loading: false
+    })
+    /*diffBot.article({uri: this.state.articles[0][rowInfo.index]}, function(err, response) {
       console.log("Content of Selected Article: ", response.objects[0])
       self.setState({
         selectedArticle: response.objects[0],
         loading: false
       })
-    })
+    })*/
+  }
+
+  getStatisticsTable()
+  {
+    console.log("Inside getStatisticsTable() :", this.state)
+    this.props.getArticleUrl(this.state.selectedArticle)
   }
 
   render() {
-    const {loading} = this.state
+    const {loading, open} = this.state
     const articles = this.state.articles[0]
 
     const columns = [{
@@ -92,7 +115,18 @@ class Article extends React.Component {
           }}
         />
         <Divider horizontal>Article Content</Divider>
-        <Segment loading={loading}>{this.state.selectedArticle.text}</Segment>
+        <Segment loading={loading}><a>{this.state.selectedArticle}</a>
+        </Segment>
+        <Button
+          positive
+          icon='checkmark'
+          labelPosition='right'
+          content="Get Table(s)"
+          onClick={this.getStatisticsTable}
+        />
+        {/* <ArticleModal open={this.state.articleOpen}
+                      selectedArticle={this.state.selectedArticle}
+                      getStatistics={this.getStatisticsTable}/>*/}
       </div>
 
     )
