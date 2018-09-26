@@ -96,7 +96,7 @@ class Testing extends React.Component {
     const trimmedArray = []
 
     array.forEach(function(word){
-      let pattern = /([^[a-zA-Z-æøåÆØÅ]+$)+/ig
+      let pattern = /([^[a-zA-Z-æøåÆØÅ])+/ig
       word = word.replace(pattern, '').toLowerCase()
       trimmedArray.push(word)
     })
