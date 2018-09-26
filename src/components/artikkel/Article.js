@@ -76,7 +76,6 @@ class Article extends React.Component {
           rowsText='rader'
           className='-striped -highlight'
           style={{height: '400px'}}
-          className='-striped -highlight'
           showPaginationTop
           showPaginationBottom
           getTdProps={(state, rowInfo, column, instance) => {

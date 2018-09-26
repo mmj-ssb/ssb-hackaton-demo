@@ -7,6 +7,7 @@ import VariableExtractor from './components/statistikkbanken/variableExtractor/V
 import StatistikkbankenTags from './components/statistikkbanken/tags/Tags'
 import Analyzer from './components/textanalyze/Analyzer'
 import Article from './components/artikkel/Article'
+import Testing from './components/Testing'
 
 const notFound = ({location}) => {
   const content = '\'' + location.pathname + '\' finnes ikke'
@@ -49,9 +50,16 @@ class App extends Component {
                     Hente variabler
                   </Link>
                 </Menu.Item>
+
                 <Menu.Item>
                   <Link to='/artikkel'>
                     Artikler
+                  </Link>
+                </Menu.Item>
+
+                <Menu.Item>
+                  <Link to='/testing'>
+                    Teste løypa
                   </Link>
                 </Menu.Item>
               </Menu>
@@ -73,6 +81,8 @@ class App extends Component {
               <Route path='/artikkel' exact component={Article} />
 
               <Route path='/analyzer' exact component={Analyzer} />
+
+              <Route path='/testing' exact component={Testing}/>
 
               <Route component={notFound} />
             </Switch>
