@@ -142,7 +142,7 @@ class Testing extends React.Component {
   }
 
   render () {
-    const {readyVariables, errorVariables, table, tableTitle, variables, readyArticle, articleUrl, article, readyCountArray} = this.state
+    const {readyVariables, errorVariables, table, tableTitle, variables, readyArticle, articleUrl, article} = this.state
 
     return (
       <Segment basic>
