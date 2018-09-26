@@ -8,6 +8,7 @@ import StatistikkbankenTags from './components/statistikkbanken/tags/Tags'
 import Analyzer from './components/textanalyze/Analyzer'
 import Article from './components/artikkel/Article'
 import Testing from './components/Testing'
+import Memphisto from './components/Memphisto'
 
 const notFound = ({location}) => {
   const content = '\'' + location.pathname + '\' finnes ikke'
@@ -62,6 +63,12 @@ class App extends Component {
                     Teste løypa
                   </Link>
                 </Menu.Item>
+
+                <Menu.Item>
+                  <Link to='/memphisto'>
+                    Memphisto
+                  </Link>
+                </Menu.Item>
               </Menu>
             </Segment>
           </Grid.Column>
@@ -83,6 +90,8 @@ class App extends Component {
               <Route path='/analyzer' exact component={Analyzer} />
 
               <Route path='/testing' exact component={Testing}/>
+
+              <Route path='/memphisto' exact component={Memphisto} />
 
               <Route component={notFound} />
             </Switch>
