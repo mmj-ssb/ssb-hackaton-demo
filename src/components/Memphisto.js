@@ -1,6 +1,6 @@
 import React from 'react'
 import axios from 'axios'
-import { Button, Divider, Input, Segment } from 'semantic-ui-react'
+import { Button, Divider, Input, List, Segment } from 'semantic-ui-react'
 
 let Diffbot = require('diffbot').Diffbot
 let diffBot = new Diffbot('12774256cd58c887d773094050451db8')
@@ -9,6 +9,7 @@ class Memphisto extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
+      rootReady: false,
       ready: false,
       readyArticle: false,
       articleUrl: '',
@@ -17,8 +18,23 @@ class Memphisto extends React.Component {
       textArray: [],
       countArray: [],
       matches: {},
-      bestMatch: ''
+      matchedWords: [],
+      bestMatch: '',
+      readyRelevantStuff: false,
+      relevantStuff: {},
+      subSubject: {},
+      subjects: [],
+      subjectString: '',
+      factPageGuess: ''
     }
+  }
+
+  componentDidMount () {
+    axios.get(apiUrl).then(response => {
+      this.setState({tables: response.data}, () => {
+        this.setState({rootReady: true})
+      })
+    })
   }
 
   upperCaseFirst = (string) => {
@@ -86,12 +102,15 @@ class Memphisto extends React.Component {
                     [stateMinorVariables]: minorVariables
                   }, () => {
                     const stateMatches = 'matches' + tables[i]
+                    const matchedWords = this.state.matchedWords.slice()
                     let matches = 0
 
                     Object.keys(this.state.countArray).forEach(key => {
                       for (let imv = 0, lmv = this.state[stateMajorVariables].length; imv < lmv; imv++) {
                         if (key === this.state[stateMajorVariables][imv]) {
                           matches++
+
+                          matchedWords.push(key)
 
                           console.log('Fant match (majorVariable): \'' + key + '\' i tabell ' + tables[i])
                         }
@@ -101,12 +120,17 @@ class Memphisto extends React.Component {
                         if (key === this.state[stateMinorVariables][inv]) {
                           matches++
 
+                          matchedWords.push(key)
+
                           console.log('Fant match (minorVariable): \'' + key + '\' i tabell ' + tables[i])
                         }
                       }
                     })
 
-                    this.setState({[stateMatches]: matches}, () => {
+                    this.setState({
+                      [stateMatches]: matches,
+                      matchedWords: matchedWords
+                    }, () => {
                       if (i === l - 1) {
                         this.setState({
                           matches: {
@@ -149,12 +173,70 @@ class Memphisto extends React.Component {
     })
   }
 
+  handleFindRelevantStuff = () => {
+    const url = apiUrl + '?query=' + this.state.bestMatch
+
+    axios.get(url).then(response => {
+      const path = response.data[0].path.split('/')
+      const table = path[3]
+      const subSubject = path[2]
+      const subject = path[1]
+
+      this.setState({
+        relevantStuff: response.data
+      }, () => {
+        const subjectUrl = apiUrl + '/' + subject + '/'
+        const subSubjectUrl = subjectUrl + subSubject + '/'
+
+        axios.get(subSubjectUrl).then(response => {
+          this.setState({subSubject: response.data[0]}, () => {
+            axios.get(subjectUrl).then(response => {
+              this.setState({subjects: response.data}, () => {
+                let string = ''
+                let guess = ''
+
+                for (let i = 0, l = this.state.tables.length; i < l; i++) {
+                  if (subject === this.state.tables[i].id) {
+                    string = this.state.tables[i].text
+                  }
+                }
+
+                string = string.toLowerCase()
+                string = string.replace(new RegExp('æ', 'g'), 'ae')
+                string = string.replace(new RegExp('ø', 'g'), 'o')
+                string = string.replace(new RegExp('å', 'g'), 'aa')
+                string = string.replace(/\s/g, '-')
+
+                for (let i = 0, l = this.state.matchedWords.length; i < l; i++) {
+                  for (let ii = 0, ll = factPages.length; ii < ll; ii++) {
+                    if (this.state.matchedWords[i].match(factPages[ii])) {
+                      guess = factPages[ii]
+
+                      console.log('Fant match til faktaside')
+                    }
+                  }
+                }
+
+                this.setState({
+                  subjectString: string,
+                  factPageGuess: guess
+                }, () => {
+                  this.setState({readyRelevantStuff: true})
+                })
+              })
+            })
+          })
+        })
+      })
+    })
+  }
+
   handleCheckState = () => {
     console.log(this.state)
   }
 
   render () {
-    const {ready, readyArticle, articleUrl, bestMatch} = this.state
+    const {rootReady, ready, readyArticle, articleUrl, bestMatch, readyRelevantStuff, relevantStuff, subjects, subSubject, subjectString, factPageGuess} = this.state
 
     return (
       <Segment basic>
@@ -172,11 +254,61 @@ class Memphisto extends React.Component {
 
         {readyArticle &&
         <Segment basic loading={!ready}>
-          <a href={statbankUrl + bestMatch + '/'} target='_blank'>Klikk meg!</a>
+          <a href={statbankUrl + bestMatch + '/'} target='_blank'>Tabell</a>
+
+          <Divider hidden />
+
+          <Button primary content='Finn relevante greier' onClick={this.handleFindRelevantStuff} />
+        </Segment>
+        }
+
+        {readyRelevantStuff &&
+        <Segment basic>
+          {Object.keys(relevantStuff).map((item, index) => {
+            let stuff = relevantStuff[index].path.split('/').pop()
+
+            return(
+              <List key='liste'>
+                <List.Item key='relevant?'>
+                  <a href={ssbUrl + stuff} target='_blank'>Relevant?</a>
+                </List.Item>
+
+                <List.Item key='relatert'>
+                  <a href={statbankListUrl + stuff} target='_blank'>Relaterte tabeller</a>
+                </List.Item>
+
+                <List.Item key='underemne'>
+                  Underemne: {subSubject.text}
+                </List.Item>
+
+                <List.Item key='tilhørende emner'>
+                  Tilhørende emner:
+                  <List.List>
+                    {Object.keys(subjects).map((item, index) => {
+                      return(
+                        <List.Item key={index}>
+                          {subjects[index].text}
+                        </List.Item>
+                      )
+                    })}
+                  </List.List>
+                </List.Item>
+
+                <List.Item key='faktaside'>
+                  <a href={ssbUrl + subjectString + '/faktaside/' + factPageGuess} target='_blank'>Faktaside?</a>
+                  {factPageGuess === '' ? <span style={{color: '#db2828'}}> - Fant ingen dessverre...</span> : <span style={{color: '#21ba45'}}> - Fant en!</span>}
+                </List.Item>
+              </List>
+              )
+          })}
         </Segment>
         }
 
         <Button color='pink' content='Sjekk state' onClick={this.handleCheckState} />
+
+        {rootReady &&
+        <span style={{color: '#21ba45'}}>Klart!</span>
+        }
       </Segment>
     )
   }
@@ -187,6 +319,10 @@ export default Memphisto
 const apiUrl = 'https://data.ssb.no/api/v0/no/table/'
 
 const statbankUrl = 'https://www.ssb.no/statbank/table/'
+
+const statbankListUrl = 'https://www.ssb.no/statbank/list/'
+
+const ssbUrl = 'https://www.ssb.no/'
 
 const tables = [
   '05678',
@@ -199,4 +335,23 @@ const tables = [
   '03024',
   '11642',
   '12359'
+]
+
+const factPages = [
+  'befolkningen',
+  'likestilling',
+  'innvandring',
+  'bolig',
+  'arbeid',
+  'helse',
+  'bil-og-transport',
+  'utdanning',
+  'norsk-okonomi',
+  'internett-og-mobil',
+  'norsk-naeringsliv',
+  'jakt',
+  'fiske',
+  'religion',
+  'stortingsvalg',
+  'slik-brukes-skattepengene'
 ]
