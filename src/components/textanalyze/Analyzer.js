@@ -5,36 +5,48 @@ class Analyzer extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      initialText: 'Klipp inn tekst',
+      initialText: 'Lim inn tekst',
       textArray: '',
       countArray: ''
     }
   }
 
-  handleMakeButtonClick = () => {
-    let array = this.state.initialText.split(' ')
-    let trimmedArray = []
+  countWordInText = (text) => {
+    let trimmedArray = this.trimArray(text.split(' '))
+    let counts = this.countSimularElement(trimmedArray)
+    console.log(counts)
+    return counts
+  }
 
-    array.forEach(function(word){
-      //let pattern = /([^\s\w]|_)+/ig
-      let pattern = /([^[a-zA-Z-æøåÆØÅ]+$)+/ig
+  trimArray = (array) => {
+    let trimmedArray = []
+    array.forEach(function (word) {
+      let pattern = /([^[a-zA-Z-æøåÆØÅ])+/ig
       word = word.replace(pattern, '').toLowerCase()
       trimmedArray.push(word)
     })
+    return trimmedArray
+  }
+
+  countSimularElement = (array) => {
+    let counts = []
+    array.forEach(function (x) { counts[x] = (counts[x] || 0) + 1 })
+    return counts
+  }
+
+  handleMakeButtonClick = () => {
+    let trimmedArray = this.trimArray(this.state.initialText.split(' '))
 
     this.setState({
-      textArray : trimmedArray
+      textArray: trimmedArray
     })
   }
 
   handleCountButtonClick = () => {
-    let array = this.state.textArray
-
-    let counts = []
-    array.forEach(function(x) { counts[x] = (counts[x] || 0)+1 })
+    let counts = this.countSimularElement(this.state.textArray)
 
     this.setState({
-      countArray : counts
+      countArray: counts
     })
 
     console.log(counts)
@@ -47,13 +59,14 @@ class Analyzer extends React.Component {
   render () {
     return (
       <Form>
-        <TextArea placeholder='Initiell tekst' onChange={this.handleTextAreaChange} value={this.state.initialText}/>
+        <TextArea placeholder='Initiell tekst' onChange={this.handleTextAreaChange} value={this.state.initialText}
+                  style={{minHeight: 500}}/>
         <Divider></Divider>
-        <Button content='Lag array' onClick={this.handleMakeButtonClick} />
+        <Button content='Lag array' onClick={this.handleMakeButtonClick}/>
         <Divider></Divider>
-        <TextArea placeholder='Array' value={this.state.textArray}/>
+        <TextArea placeholder='Array' value={this.state.textArray.toString()} style={{minHeight: 500}}/>
         <Divider></Divider>
-        <Button content='Tell forekomster' onClick={this.handleCountButtonClick} />
+        <Button content='Tell forekomster' onClick={this.handleCountButtonClick}/>
         <Divider></Divider>
       </Form>
     )
