@@ -149,7 +149,69 @@ class Memphisto extends React.Component {
                           })
 
                           this.setState({bestMatch: sortedMatch[0][0]}, () => {
-                            this.setState({ready: true})
+                            this.setState({ready: true}, () => {
+                              const url = apiUrl + '?query=' + this.state.bestMatch
+
+                              axios.get(url).then(response => {
+                                const path = response.data[0].path.split('/')
+                                // const table = path[3]
+                                const subSubject = path[2]
+                                const subject = path[1]
+
+                                this.setState({
+                                  relevantStuff: response.data
+                                }, () => {
+                                  const subjectUrl = apiUrl + '/' + subject + '/'
+                                  const subSubjectUrl = subjectUrl + subSubject + '/'
+
+                                  axios.get(subSubjectUrl).then(response => {
+                                    this.setState({subSubject: response.data[0]}, () => {
+                                      axios.get(subjectUrl).then(response => {
+                                        this.setState({subjects: response.data}, () => {
+                                          let string = ''
+                                          let guess = ''
+
+                                          for (let i = 0, l = this.state.tables.length; i < l; i++) {
+                                            if (subject === this.state.tables[i].id) {
+                                              string = this.state.tables[i].text
+                                            }
+                                          }
+
+                                          string = string.toLowerCase()
+                                          string = string.replace(new RegExp('æ', 'g'), 'ae')
+                                          string = string.replace(new RegExp('ø', 'g'), 'o')
+                                          string = string.replace(new RegExp('å', 'g'), 'aa')
+                                          string = string.replace(/\s/g, '-')
+
+                                          for (let i = 0, l = this.state.matchedWords.length; i < l; i++) {
+                                            for (let ii = 0, ll = factPages.length; ii < ll; ii++) {
+                                              if (this.state.matchedWords[i].match(factPages[ii])) {
+                                                guess = factPageUrls[ii]
+
+                                                console.log('Fant match til faktaside')
+                                              }
+                                            }
+                                          }
+
+                                          this.setState({
+                                            subjectString: string,
+                                            factPageGuess: guess
+                                          }, () => {
+                                            this.setState({readyRelevantStuff: true})
+                                          })
+                                        })
+                                      }).catch(error => {
+                                        console.log(error)
+                                      })
+                                    })
+                                  }).catch(error => {
+                                    console.log(error)
+                                  })
+                                })
+                              }).catch(error => {
+                                console.log(error)
+                              })
+                            })
                           })
                         })
                       } else {
@@ -173,75 +235,17 @@ class Memphisto extends React.Component {
     })
   }
 
-  handleFindRelevantStuff = () => {
-    const url = apiUrl + '?query=' + this.state.bestMatch
-
-    axios.get(url).then(response => {
-      const path = response.data[0].path.split('/')
-      const table = path[3]
-      const subSubject = path[2]
-      const subject = path[1]
-
-      this.setState({
-        relevantStuff: response.data
-      }, () => {
-        const subjectUrl = apiUrl + '/' + subject + '/'
-        const subSubjectUrl = subjectUrl + subSubject + '/'
-
-        axios.get(subSubjectUrl).then(response => {
-          this.setState({subSubject: response.data[0]}, () => {
-            axios.get(subjectUrl).then(response => {
-              this.setState({subjects: response.data}, () => {
-                let string = ''
-                let guess = ''
-
-                for (let i = 0, l = this.state.tables.length; i < l; i++) {
-                  if (subject === this.state.tables[i].id) {
-                    string = this.state.tables[i].text
-                  }
-                }
-
-                string = string.toLowerCase()
-                string = string.replace(new RegExp('æ', 'g'), 'ae')
-                string = string.replace(new RegExp('ø', 'g'), 'o')
-                string = string.replace(new RegExp('å', 'g'), 'aa')
-                string = string.replace(/\s/g, '-')
-
-                for (let i = 0, l = this.state.matchedWords.length; i < l; i++) {
-                  for (let ii = 0, ll = factPages.length; ii < ll; ii++) {
-                    if (this.state.matchedWords[i].match(factPages[ii])) {
-                      guess = factPages[ii]
-
-                      console.log('Fant match til faktaside')
-                    }
-                  }
-                }
-
-                this.setState({
-                  subjectString: string,
-                  factPageGuess: guess
-                }, () => {
-                  this.setState({readyRelevantStuff: true})
-                })
-              })
-            })
-          })
-        })
-      })
-    })
-  }
-
   handleCheckState = () => {
     console.log(this.state)
   }
 
   render () {
-    const {rootReady, ready, readyArticle, articleUrl, bestMatch, readyRelevantStuff, relevantStuff, subjects, subSubject, subjectString, factPageGuess} = this.state
+    const {rootReady, ready, readyArticle, articleUrl, bestMatch, readyRelevantStuff, relevantStuff, subjects, subSubject, factPageGuess} = this.state
 
     return (
       <Segment basic>
         <Input placeholder='Artikkel url' name='articleUrl' value={articleUrl}
-               onChange={this.handleInputChange}
+               onChange={this.handleInputChange} disabled={!rootReady}
                action={{
                  icon: 'car',
                  color: 'teal',
@@ -250,24 +254,16 @@ class Memphisto extends React.Component {
                }}
         />
 
-        <Divider hidden />
+        <Segment basic loading={!readyRelevantStuff} hidden={!ready}>
 
-        {readyArticle &&
-        <Segment basic loading={!ready}>
+          {readyArticle &&
           <a href={statbankUrl + bestMatch + '/'} target='_blank'>Tabell</a>
+          }
 
-          <Divider hidden />
-
-          <Button primary content='Finn relevante greier' onClick={this.handleFindRelevantStuff} />
-        </Segment>
-        }
-
-        {readyRelevantStuff &&
-        <Segment basic>
-          {Object.keys(relevantStuff).map((item, index) => {
+          {readyRelevantStuff && Object.keys(relevantStuff).map((item, index) => {
             let stuff = relevantStuff[index].path.split('/').pop()
 
-            return(
+            return (
               <List key='liste'>
                 <List.Item key='relevant?'>
                   <a href={ssbUrl + stuff} target='_blank'>Relevant?</a>
@@ -285,7 +281,7 @@ class Memphisto extends React.Component {
                   Tilhørende emner:
                   <List.List>
                     {Object.keys(subjects).map((item, index) => {
-                      return(
+                      return (
                         <List.Item key={index}>
                           {subjects[index].text}
                         </List.Item>
@@ -295,20 +291,20 @@ class Memphisto extends React.Component {
                 </List.Item>
 
                 <List.Item key='faktaside'>
-                  <a href={ssbUrl + subjectString + '/faktaside/' + factPageGuess} target='_blank'>Faktaside?</a>
-                  {factPageGuess === '' ? <span style={{color: '#db2828'}}> - Fant ingen dessverre...</span> : <span style={{color: '#21ba45'}}> - Fant en!</span>}
+                  <a href={factPageGuess} target='_blank'>Faktaside?</a>
+                  {factPageGuess === '' ? <span style={{color: '#db2828'}}> - Fant ingen dessverre...</span> :
+                    <span style={{color: '#21ba45'}}> - Fant en!</span>}
                 </List.Item>
               </List>
-              )
-          })}
+            )
+          })
+          }
+
         </Segment>
-        }
+
+        {!ready && <Divider hidden />}
 
         <Button color='pink' content='Sjekk state' onClick={this.handleCheckState} />
-
-        {rootReady &&
-        <span style={{color: '#21ba45'}}>Klart!</span>
-        }
       </Segment>
     )
   }
@@ -354,4 +350,23 @@ const factPages = [
   'religion',
   'stortingsvalg',
   'slik-brukes-skattepengene'
+]
+
+const factPageUrls = [
+  'https://www.ssb.no/befolkning/faktaside/befolkningen',
+  'https://www.ssb.no/befolkning/faktaside/likestilling',
+  'https://www.ssb.no/innvandring-og-innvandrere/faktaside/innvandring',
+  'https://www.ssb.no/bygg-bolig-og-eiendom/faktaside/bolig',
+  'https://www.ssb.no/arbeid-og-lonn/faktaside/arbeid',
+  'https://www.ssb.no/helse/faktaside/helse',
+  'https://www.ssb.no/transport-og-reiseliv/faktaside/bil-og-transport',
+  'https://www.ssb.no/utdanning/faktaside/utdanning',
+  'https://www.ssb.no/nasjonalregnskap-og-konjunkturer/faktaside/norsk-okonomi',
+  'https://www.ssb.no/teknologi-og-innovasjon/faktaside/internett-og-mobil',
+  'https://www.ssb.no/nasjonalregnskap-og-konjunkturer/faktaside/norsk-naeringsliv',
+  'https://www.ssb.no/jord-skog-jakt-og-fiskeri/faktaside/jakt',
+  'https://www.ssb.no/jord-skog-jakt-og-fiskeri/faktaside/fiske',
+  'https://www.ssb.no/kultur-og-fritid/faktaside/religion',
+  'https://www.ssb.no/valg/faktaside/stortingsvalg',
+  'https://www.ssb.no/offentlig-sektor/faktaside/slik-brukes-skattepengene'
 ]
