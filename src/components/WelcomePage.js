@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Grid, Image, Segment } from 'semantic-ui-react'
+import { Button, Grid, Image } from 'semantic-ui-react'
 import ssb_logo from '../../src/logos/ord_til_tall.png'
 
 let centerAlign = {

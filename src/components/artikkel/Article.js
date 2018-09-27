@@ -1,13 +1,6 @@
 import React from 'react'
-import { Divider, Segment, Button, Header, Image, Modal } from 'semantic-ui-react'
 import ReactTable from 'react-table'
 import 'react-table/react-table.css'
-
-
-let Diffbot = require('diffbot').Diffbot
-
-let diffBot = new Diffbot('12774256cd58c887d773094050451db8');
-
 
 const CONST_ARTICLE_LIST = [
   "https://www.vg.no/nyheter/innenriks/i/jqB1z/stortingspolitikerne-gir-seg-selv-21-674-kroner-ekstra-i-loenn",
@@ -69,8 +62,7 @@ class Article extends React.Component {
   }
 
   render() {
-    const {loading, open} = this.state
-    const articles = this.state.articles[0]
+   const articles = this.state.articles[0]
 
     const columns = [{
       Header: 'Article Link',

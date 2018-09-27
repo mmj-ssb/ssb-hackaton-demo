@@ -58,10 +58,6 @@ class StatisticsResult extends React.Component {
 
 export default StatisticsResult
 
-const apiUrl = 'https://data.ssb.no/api/v0/no/table/'
-
-const statbankUrl = 'https://www.ssb.no/statbank/table/'
-
 const statbankListUrl = 'https://www.ssb.no/statbank/list/'
 
 const ssbUrl = 'https://www.ssb.no/'

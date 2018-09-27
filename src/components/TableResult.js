@@ -1,5 +1,5 @@
 import React from 'react'
-import { Segment, List } from 'semantic-ui-react'
+import { Segment } from 'semantic-ui-react'
 
 class TableResult extends React.Component {
   constructor (props) {
@@ -8,8 +8,8 @@ class TableResult extends React.Component {
   }
 
   render () {
-    const {bestMatch, table, relevant, subjects, subSubject, factPageGuess} = this.props
-    let relevantStuff = relevant
+    const {bestMatch, table, relevant} = this.props
+
     if (bestMatch){
       return (
         <Segment basic>
@@ -27,11 +27,3 @@ class TableResult extends React.Component {
 }
 
 export default TableResult
-
-const apiUrl = 'https://data.ssb.no/api/v0/no/table/'
-
-const statbankUrl = 'https://www.ssb.no/statbank/table/'
-
-const statbankListUrl = 'https://www.ssb.no/statbank/list/'
-
-const ssbUrl = 'https://www.ssb.no/'

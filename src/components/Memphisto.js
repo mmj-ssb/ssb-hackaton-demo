@@ -2,7 +2,7 @@ import React from 'react'
 import axios from 'axios'
 import Article from '../components/artikkel/Article'
 import TableResult from './TableResult'
-import { Button, Divider, Input, List, Segment, Icon, Step } from 'semantic-ui-react'
+import { Button, Input, Segment, Step } from 'semantic-ui-react'
 import StatisticsResult from "./StatisticsResult";
 
 let Diffbot = require('diffbot').Diffbot
@@ -287,8 +287,7 @@ class Memphisto extends React.Component {
 
   render () {
     const {
-      rootReady, ready, readyArticle, articleUrl, bestMatch, active, readyRelevantStuff, relevantStuff, subjects,
-      subSubject, factPageGuess, isArticlePage, isStatsPage, isTablePage
+      rootReady, articleUrl, bestMatch, readyRelevantStuff, relevantStuff, isArticlePage, isStatsPage, isTablePage
     } = this.state
     const articlePageComp = (<Article getArticleUrl={this.getArticleUrl}></Article>);
     const tableResultPageComp = (<TableResult bestMatch={bestMatch}
@@ -403,10 +402,6 @@ export default Memphisto
 const apiUrl = 'https://data.ssb.no/api/v0/no/table/'
 
 const statbankUrl = 'https://www.ssb.no/statbank/table/'
-
-const statbankListUrl = 'https://www.ssb.no/statbank/list/'
-
-const ssbUrl = 'https://www.ssb.no/'
 
 const tables = [
   '05678',
