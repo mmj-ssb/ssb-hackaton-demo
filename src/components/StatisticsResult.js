@@ -1,5 +1,5 @@
 import React from 'react'
-import { Segment, List } from 'semantic-ui-react'
+import { Segment, List, Image, Grid, Label } from 'semantic-ui-react'
 
 class StatisticsResult extends React.Component {
   constructor (props) {
@@ -16,38 +16,57 @@ class StatisticsResult extends React.Component {
           let stuff = relevantStuff[index].path.split('/').pop()
 
           return (
-            <List key='liste'>
-              <List.Item key='relevant?'>
-                <a href={ssbUrl + stuff} target='_blank'>Relevant?</a>
-              </List.Item>
-
-              <List.Item key='relatert'>
-                <a href={statbankListUrl + stuff} target='_blank'>Relaterte tabeller</a>
-              </List.Item>
-
-              <List.Item key='underemne'>
-                Underemne: {subSubject.text}
-              </List.Item>
-
-              <List.Item key='tilhørende emner'>
-                Tilhørende emner:
-                <List.List>
-                  {Object.keys(subjects).map((item, index) => {
-                    return (
-                      <List.Item key={index}>
-                        {subjects[index].text}
-                      </List.Item>
-                    )
-                  })}
-                </List.List>
-              </List.Item>
-
-              <List.Item key='faktaside'>
-                <a href={factPageGuess} target='_blank'>Faktaside?</a>
-                {factPageGuess === '' ? <span style={{color: '#db2828'}}> - Fant ingen dessverre...</span> :
-                  <span style={{color: '#21ba45'}}> - Fant en!</span>}
-              </List.Item>
-            </List>
+            <Grid columns={2} divided>
+              <Grid.Row>
+                <Grid.Column width={10}>
+                  <Segment color='green' style={{ "font-weight": 'bold'}}>
+                    <a href={ssbUrl + stuff} target='_blank'>For å få relevant informasjon for artikkelen klikk
+                      her</a>
+                  </Segment>
+                </Grid.Column>
+              </Grid.Row>
+              <Grid.Row>
+                <Grid.Column width={10}>
+                  <Segment color='green' style={{ "font-weight": 'bold'}}>
+                    <a href={statbankListUrl + stuff} target='_blank'>Relaterte tabeller</a>
+                  </Segment>
+                </Grid.Column>
+              </Grid.Row>
+              <Grid.Row>
+                <Grid.Column width={10}>
+                  <Segment color='green' style={{ "font-weight": 'bold'}}>
+                    Underemne: <Segment color='' style={{ "font-weight": 'normal'}}>{subSubject.text}</Segment>
+                  </Segment>
+                </Grid.Column>
+              </Grid.Row>
+              <Grid.Row>
+                <Grid.Column width={10}>
+                  <Segment color='green' style={{ "font-weight": 'bold'}}>
+                    Tilhørende emner:
+                    <Segment color='' style={{ "font-weight": 'normal'}}>{Object.keys(subjects).map((item, index) => {
+                      return (
+                        <Grid>
+                          <Grid.Row columns={3}>
+                            <Label as='a' image>
+                              {subjects[index].text}
+                            </Label>
+                          </Grid.Row>
+                        </Grid>
+                      )
+                    })}</Segment>
+                    </Segment>
+                </Grid.Column>
+              </Grid.Row>
+              <Grid.Row>
+                <Grid.Column width={10}>
+                  <Segment>
+                    <a href={factPageGuess} target='_blank'>Faktaside?</a>
+                    {factPageGuess === '' ? <span style={{color: '#db2828'}}> - Fant ingen dessverre...</span> :
+                      <span style={{color: '#21ba45'}}> - Fant en!</span>}
+                  </Segment>
+                </Grid.Column>
+              </Grid.Row>
+            </Grid>
           )
         })
         }
