@@ -50,7 +50,7 @@ class Article extends React.Component {
   }
 
   selectArticle(e, state, column, rowInfo, instance) {
-    this.showArticle(true)
+    /*this.showArticle(true)*/
     this.setState({
       loading: true
     })
@@ -58,19 +58,13 @@ class Article extends React.Component {
     this.setState({
       selectedArticle: rowInfo.original,
       loading: false
+    }, () => {
+      this.props.getArticleUrl(this.state.selectedArticle)
     })
-    /*diffBot.article({uri: this.state.articles[0][rowInfo.index]}, function(err, response) {
-      console.log("Content of Selected Article: ", response.objects[0])
-      self.setState({
-        selectedArticle: response.objects[0],
-        loading: false
-      })
-    })*/
   }
 
   getStatisticsTable()
   {
-    console.log("Inside getStatisticsTable() :", this.state)
     this.props.getArticleUrl(this.state.selectedArticle)
   }
 
@@ -114,7 +108,7 @@ class Article extends React.Component {
             }
           }}
         />
-        <Divider horizontal>Article Content</Divider>
+       {/* <Divider horizontal>Article Content</Divider>
         <Segment loading={loading}><a>{this.state.selectedArticle}</a>
         </Segment>
         <Button
@@ -123,7 +117,7 @@ class Article extends React.Component {
           labelPosition='right'
           content="Get Table(s)"
           onClick={this.getStatisticsTable}
-        />
+        />*/}
         {/* <ArticleModal open={this.state.articleOpen}
                       selectedArticle={this.state.selectedArticle}
                       getStatistics={this.getStatisticsTable}/>*/}
