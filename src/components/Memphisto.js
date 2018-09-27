@@ -367,24 +367,24 @@ class Memphisto extends React.Component {
             icon='file alternate'
             link
             onClick={this.enableArticlePage}
-            title='Article'
-            description='Choose Article'
+            title='Tekst'
+            description='Velg tekst'
           />
           <Step
             active={isTablePage}
             icon='table'
             link
             onClick={this.enableTablePage}
-            title='Table'
-            description='Select table layout'
+            title='Tabell'
+            description='Statistisk tabell'
           />
           <Step
             active={isStatsPage}
             icon='numbered list'
             link
             onClick={this.enableStatsPage}
-            title='Statistics'
-            description='View Statistics'
+            title='Statistikk'
+            description='Statistiske emner'
           />
         </Step.Group>
         <Segment loading={!readyRelevantStuff}>
