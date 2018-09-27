@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactTable from 'react-table'
 import 'react-table/react-table.css'
+import { List } from 'semantic-ui-react'
 
 const CONST_ARTICLE_LIST = [
   "https://www.vg.no/nyheter/innenriks/i/jqB1z/stortingspolitikerne-gir-seg-selv-21-674-kroner-ekstra-i-loenn",
@@ -15,11 +16,40 @@ const CONST_ARTICLE_LIST = [
   "https://www.nettavisen.no/na24/dette-er-den-nye-norske-lnnen/3423308467.html"
 ]
 
+const CONST_ARTICLE_LIST_2 = [
+  {
+    id: 0,
+    article: "https://www.vg.no/nyheter/innenriks/i/jqB1z/stortingspolitikerne-gir-seg-selv-21-674-kroner-ekstra-i-loenn"
+  },
+  {id: 1, article: "https://e24.no/jobb/derfor-oeker-sivilingenioerenes-loenn-mer-enn-siviloekonomenes/22668391"},
+  {
+    id: 2,
+    article: "https://e24.no/kommentarer/likestilling/kommentar-kvinner-vil-fortsette-aa-vaere-loennstapere/23943801"
+  },
+  {id: 3, article: "https://www.dinside.no/okonomi/sjekk-om-du-tjener-nok/69399318"},
+  {id: 4, article: "https://www.nettavisen.no/na24/her-er-gjennomsnitts-lnnen-i-300-yrker/3423411726.html"},
+  {
+    id: 5,
+    article: "https://www.tu.no/artikler/staten-henger-langt-etter-pa-startlonn-frykter-lav-rekruttering-kan-true-digitaliseringsprosjekt/414437"
+  },
+  {
+    id: 6,
+    article: "https://www.lofotposten.no/naringsliv/jobb/okonomi/her-er-norges-200-best-betalte-yrker/s/5-29-374976"
+  },
+  {
+    id: 7,
+    article: "https://www.aftenposten.no/karriere/-Velger-du-utdanning-etter-inntekt-Her-er-yrkene-med-hoyest-lonn-11497b.html"
+  },
+  {id: 8, article: "https://www.digi.no/artikler/sa-mye-tjener-it-ansatte/320713"},
+  {id: 9, article: "https://www.nettavisen.no/na24/dette-er-den-nye-norske-lnnen/3423308467.html"}
+]
+
 class Article extends React.Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.state = {
       articles: '',
+      articlesList: '',
       selectedArticle: '',
       loading: false,
       articleOpen: false
@@ -36,13 +66,14 @@ class Article extends React.Component {
     this.setState({open: false})
   }
 
-  componentWillMount() {
+  componentWillMount () {
     this.setState(prevState => ({
       articles: [...prevState.articles, CONST_ARTICLE_LIST],
+      articlesList: [...prevState.articlesList, CONST_ARTICLE_LIST_2]
     }))
   }
 
-  selectArticle(e, state, column, rowInfo, instance) {
+  selectArticle (e, state, column, rowInfo, instance) {
     /*this.showArticle(true)*/
     this.setState({
       loading: true
@@ -53,16 +84,50 @@ class Article extends React.Component {
       loading: false
     }, () => {
       this.props.getArticleUrl(this.state.selectedArticle)
+      console.log(this.state.selectedArticle)
     })
   }
 
-  getStatisticsTable()
-  {
+  selectArticleList (e, value) {
+    this.setState({
+      loading: true
+    })
+
+    this.setState({
+      selectedArticle: value,
+      loading: false
+    }, () => {
+      this.props.getArticleUrl(this.state.selectedArticle)
+      console.log(this.state.selectedArticle)
+    })
+  }
+
+  getStatisticsTable () {
     this.props.getArticleUrl(this.state.selectedArticle)
   }
 
-  render() {
-   const articles = this.state.articles[0]
+  handleClicked = (e, value) => {
+    if (value.length > 0) {
+      this.selectArticleList(e, value)
+      /*window.open(value,"_blank");*/
+    }
+  }
+
+  list(){
+    const articleList = CONST_ARTICLE_LIST_2
+    return (
+      <List>
+        {articleList.map((article) =>
+          <List.Item key={article.id} value={article.article} style={{icon:'newspaper', cursor:'pointer'}}
+                     onClick={(e, {value}) =>
+            this.handleClicked(e, value)}> {article.article} </List.Item>
+        )}
+      </List>
+    )
+  }
+
+  render () {
+    const articles = this.state.articles[0]
 
     const columns = [{
       Header: 'Article Link',
@@ -71,6 +136,8 @@ class Article extends React.Component {
 
     return (
       <div>
+        {this.list()}
+        {/*
         <ReactTable
           data={articles}
           columns={columns}
@@ -93,14 +160,15 @@ class Article extends React.Component {
                 cursor: 'pointer'
               },
               onClick: e => {
-                if(articles.length > 0){
+                if (articles.length > 0) {
                   this.selectArticle(e, state, column, rowInfo, instance)
                 }
               }
             }
           }}
         />
-       {/* <Divider horizontal>Article Content</Divider>
+        */}
+        {/* <Divider horizontal>Article Content</Divider>
         <Segment loading={loading}><a>{this.state.selectedArticle}</a>
         </Segment>
         <Button
