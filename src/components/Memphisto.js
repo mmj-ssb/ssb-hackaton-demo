@@ -1,13 +1,15 @@
 import React from 'react'
 import axios from 'axios'
 import Article from '../components/artikkel/Article'
-import { Button, Divider, Input, List, Segment, Icon } from 'semantic-ui-react'
+import TableResult from './TableResult'
+import { Button, Divider, Input, List, Segment, Icon, Step } from 'semantic-ui-react'
+import StatisticsResult from "./StatisticsResult";
 
 let Diffbot = require('diffbot').Diffbot
 let diffBot = new Diffbot('12774256cd58c887d773094050451db8')
 
 class Memphisto extends React.Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.state = {
       rootReady: false,
@@ -20,7 +22,7 @@ class Memphisto extends React.Component {
       countArray: [],
       matches: {},
       matchedWords: [],
-      readyRelevantStuff: false,
+      readyRelevantStuff: true,
       relevantStuff: {},
       subSubject: {},
       subjects: [],
@@ -32,32 +34,34 @@ class Memphisto extends React.Component {
       isStatsPage: false
     }
 
-    this.enableArticlePage  = this.enableArticlePage.bind(this);
-    this.enableTablePage  = this.enableTablePage.bind(this);
-    this.enableStatsPage  = this.enableStatsPage.bind(this);
+    this.enableArticlePage = this.enableArticlePage.bind(this);
+    this.enableTablePage = this.enableTablePage.bind(this);
+    this.enableStatsPage = this.enableStatsPage.bind(this);
   }
 
-  enableArticlePage() {
+  enableArticlePage () {
     this.setState({
-      isArticlePage : true,
+      isArticlePage: true,
       isTablePage: false,
-      isStatsPage: false
+      isStatsPage: false,
     });
   }
 
-  enableTablePage() {
+  enableTablePage () {
     this.setState({
-      isArticlePage : false,
+      isArticlePage: false,
       isTablePage: true,
-      isStatsPage: false
+      isStatsPage: false,
+      active: true
     });
   }
 
-  enableStatsPage() {
+  enableStatsPage () {
     this.setState({
-      isArticlePage : false,
+      isArticlePage: false,
       isTablePage: false,
-      isStatsPage: true
+      isStatsPage: true,
+      active: true
     });
   }
 
@@ -86,7 +90,7 @@ class Memphisto extends React.Component {
         const array = this.state.article.text.split(' ')
         const trimmedArray = []
 
-        array.forEach(function(word) {
+        array.forEach(function (word) {
           let pattern = /([^[a-zA-Z-æøåÆØÅ])+/ig
           word = word.replace(pattern, '').toLowerCase()
           trimmedArray.push(word)
@@ -96,7 +100,7 @@ class Memphisto extends React.Component {
           const textArray = this.state.textArray
           const countArray = []
 
-          textArray.forEach(function(x) {
+          textArray.forEach(function (x) {
             countArray[x] = (countArray[x] || 0) + 1
           })
 
@@ -104,7 +108,7 @@ class Memphisto extends React.Component {
             countArray: countArray,
             readyCountArray: true
           }, () => {
-            for(let i = 0, l = tables.length; i < l; i++) {
+            for (let i = 0, l = tables.length; i < l; i++) {
               const url = apiUrl + tables[i]
               const stateName = tables[i] + 'Variables'
 
@@ -118,12 +122,12 @@ class Memphisto extends React.Component {
                   const stateMajorVariables = 'majorVariables' + tables[i]
                   const stateMinorVariables = 'minorVariables' + tables[i]
 
-                  for(let ii = 0, ll = this.state[stateName].length; ii < ll; ii++) {
+                  for (let ii = 0, ll = this.state[stateName].length; ii < ll; ii++) {
                     const text = this.state[stateName][ii].text
 
                     majorVariables.push(text.toLowerCase())
 
-                    for(let iii = 0, lll = this.state[stateName][ii].valueTexts.length; iii < lll; iii++) {
+                    for (let iii = 0, lll = this.state[stateName][ii].valueTexts.length; iii < lll; iii++) {
                       const valueText = this.state[stateName][ii].valueTexts[iii]
 
                       minorVariables.push(valueText.toLowerCase())
@@ -140,8 +144,8 @@ class Memphisto extends React.Component {
                     let matches = 0
 
                     Object.keys(this.state.countArray).forEach(key => {
-                      for(let imv = 0, lmv = this.state[stateMajorVariables].length; imv < lmv; imv++) {
-                        if(key === this.state[stateMajorVariables][imv]){
+                      for (let imv = 0, lmv = this.state[stateMajorVariables].length; imv < lmv; imv++) {
+                        if (key === this.state[stateMajorVariables][imv]){
                           matches++
 
                           matchedWords.push(key)
@@ -151,7 +155,7 @@ class Memphisto extends React.Component {
                       }
 
                       for (let inv = 0, lnv = this.state[stateMinorVariables].length; inv < lnv; inv++) {
-                        if (key === this.state[stateMinorVariables][inv]) {
+                        if (key === this.state[stateMinorVariables][inv]){
                           matches++
 
                           matchedWords.push(key)
@@ -165,7 +169,7 @@ class Memphisto extends React.Component {
                       [stateMatches]: matches,
                       matchedWords: matchedWords
                     }, () => {
-                      if (i === l - 1) {
+                      if (i === l - 1){
                         this.setState({
                           matches: {
                             ...this.state.matches,
@@ -206,7 +210,7 @@ class Memphisto extends React.Component {
                                           let guess = ''
 
                                           for (let i = 0, l = this.state.tables.length; i < l; i++) {
-                                            if (subject === this.state.tables[i].id) {
+                                            if (subject === this.state.tables[i].id){
                                               string = this.state.tables[i].text
                                             }
                                           }
@@ -219,7 +223,7 @@ class Memphisto extends React.Component {
 
                                           for (let i = 0, l = this.state.matchedWords.length; i < l; i++) {
                                             for (let ii = 0, ll = factPages.length; ii < ll; ii++) {
-                                              if (this.state.matchedWords[i].match(factPages[ii])) {
+                                              if (this.state.matchedWords[i].match(factPages[ii])){
                                                 guess = factPageUrls[ii]
 
                                                 console.log('Fant match til faktaside')
@@ -275,14 +279,28 @@ class Memphisto extends React.Component {
 
   getArticleUrl = (url) => {
     this.setState({articleUrl: url}, () => {
+      this.state.readyRelevantStuff = false
       this.enableTablePage()
       this.handleMemphisto()
     });
   }
 
-  render() {
-    const {rootReady, ready, readyArticle, articleUrl, bestMatch, active, readyRelevantStuff, relevantStuff, subjects, subSubject, factPageGuess} = this.state
+  render () {
+    const {
+      rootReady, ready, readyArticle, articleUrl, bestMatch, active, readyRelevantStuff, relevantStuff, subjects,
+      subSubject, factPageGuess, isArticlePage, isStatsPage, isTablePage
+    } = this.state
     const articlePageComp = (<Article getArticleUrl={this.getArticleUrl}></Article>);
+    const tableResultPageComp = (<TableResult bestMatch={bestMatch}
+                                              table={statbankUrl + bestMatch + '/'}
+                                              subjects={this.state.subjects}
+                                              subSubject={this.state.subSubject}
+                                              factPageGuess={this.state.factPageGuess}
+                                              relevant={relevantStuff} />)
+    const statisticsResultPageComp = (<StatisticsResult subjects={this.state.subjects}
+                                                        subSubject={this.state.subSubject}
+                                                        factPageGuess={this.state.factPageGuess}
+                                                        relevant={relevantStuff} />)
 
     return (
       <Segment basic>
@@ -295,8 +313,7 @@ class Memphisto extends React.Component {
                  content: 'Kjør'
                }}
         />
-
-        <Segment basic loading={!readyRelevantStuff} hidden={!ready}>
+        {/* <Segment basic loading={!readyRelevantStuff} hidden={!ready}>
 
           {readyArticle &&
           <a href={statbankUrl + bestMatch + '/'} target='_blank'>Tabell</a>
@@ -342,14 +359,12 @@ class Memphisto extends React.Component {
           })
           }
 
-        </Segment>
-
-        {!ready && <Divider hidden />}
+        </Segment>*/}
 
         <Button color='pink' content='Sjekk state' onClick={this.handleCheckState} />
         <Step.Group size='large' widths={3}>
           <Step
-            active={active === 'Article'}
+            active={isArticlePage}
             icon='file alternate'
             link
             onClick={this.enableArticlePage}
@@ -357,7 +372,7 @@ class Memphisto extends React.Component {
             description='Choose Article'
           />
           <Step
-            active={active === 'Table'}
+            active={isTablePage}
             icon='table'
             link
             onClick={this.enableTablePage}
@@ -365,7 +380,7 @@ class Memphisto extends React.Component {
             description='Select table layout'
           />
           <Step
-            active={active === 'Statistics'}
+            active={isStatsPage}
             icon='numbered list'
             link
             onClick={this.enableStatsPage}
@@ -373,9 +388,11 @@ class Memphisto extends React.Component {
             description='View Statistics'
           />
         </Step.Group>
-        <div>
-          { this.state.isArticlePage ? articlePageComp : null }
-        </div>
+        <Segment loading={!readyRelevantStuff}>
+          {this.state.isArticlePage ? articlePageComp : null}
+          {this.state.isTablePage ? tableResultPageComp : null}
+          {this.state.isStatsPage ? statisticsResultPageComp : null}
+        </Segment>
       </Segment>
     )
   }
