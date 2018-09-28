@@ -145,8 +145,8 @@ class Article extends React.Component {
                 data={articles}
                 columns={columns}
                 noDataText='No data!'
-                filterable
-                defaultPageSize={5}
+                defaultPageSize={15}
+                showPagination={false}
                 previousText='Forrige'
                 nextText='Neste'
                 loadingText='Laster...'

@@ -2,8 +2,9 @@ import React from 'react'
 import axios from 'axios'
 import Article from '../components/artikkel/Article'
 import TableResult from './TableResult'
-import { Button, Input, Segment, Step, TextArea, Form, Divider, Grid } from 'semantic-ui-react'
+import {Button, Input, Segment, Step, TextArea, Form, Divider, Grid, Image, Container} from 'semantic-ui-react';
 import StatisticsResult from "./StatisticsResult";
+import ssb_logo from '../logos/OTT-logo.png';
 
 let Diffbot = require('diffbot').Diffbot
 let diffBot = new Diffbot('12774256cd58c887d773094050451db8')
@@ -342,7 +343,7 @@ class Memphisto extends React.Component {
             link
             onClick={this.enableArticlePage}
             title='Tekst'
-            description='Velg tekst'
+            description='Velg artikkel/tekst'
           />
           <Step
             active={isTablePage}
@@ -361,27 +362,22 @@ class Memphisto extends React.Component {
             description='Statistiske emner'
           />
         </Step.Group>
-        <Segment loading={!readyRelevantStuff}>
-          {this.state.isArticlePage ? articlePageComp : null}
-          {this.state.isTablePage ? tableResultPageComp : null}
-          {this.state.isStatsPage ? statisticsResultPageComp : null}
-        </Segment>
-
-        <Divider horizontal>Skriv inn url</Divider>
-
-        <Form>
+        <Form hidden={this.state.isTablePage || this.state.isStatsPage}>
+          <Divider horizontal>Artikkel</Divider>
           <Form.Field>
-            <Input placeholder='tekst' name='articleUrl' value={articleUrl}
+            <Input placeholder='Artikkel url' name='articleUrl' value={articleUrl}
                    onChange={this.handleInputChange} disabled={!rootReady}
                    action={{
                      icon: 'car',
                      color: 'teal',
                      onClick: this.getArticleUrlFromTextBox,
-                     content: 'Kjør'
+                     content: 'Kjør artikkel'
                    }}
             />
           </Form.Field>
-          <Divider horizontal>Skriv inn tekst</Divider>
+          <Divider hidden />
+          <Divider hidden />
+          <Divider horizontal>Fritekst</Divider>
           <Form.Field>
             <TextArea placeholder='Lim inn tekst' name='textBox' value={this.state.textBox}
                       onChange={this.handleInputChange} readOnly={!rootReady} autoHeight />
@@ -391,6 +387,11 @@ class Memphisto extends React.Component {
           </Form.Field>
           {/*<Button color='teal' icon='car' content='chk' onClick={this.handleCheckState} />*/}
         </Form>
+        <Segment loading={!readyRelevantStuff}>
+          {this.state.isArticlePage ? articlePageComp : null}
+          {this.state.isTablePage ? tableResultPageComp : null}
+          {this.state.isStatsPage ? statisticsResultPageComp : null}
+        </Segment>
       </Segment>
     )
   }
