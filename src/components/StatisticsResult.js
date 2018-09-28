@@ -8,7 +8,8 @@ class StatisticsResult extends React.Component {
   }
 
   render () {
-    const {relevant, subjects, subSubject, factPageGuess} = this.props
+    console.log(this.props)
+    const {relevant, subject, subjects, subSubject, factPageGuess} = this.props
     let relevantStuff = relevant
     return (
       <Segment basic>
@@ -35,7 +36,9 @@ class StatisticsResult extends React.Component {
               <Grid.Row>
                 <Grid.Column width={10}>
                   <Segment color='green' style={{ "font-weight": 'bold'}}>
+                    Emne: <Segment style={{ "font-weight": 'normal'}}>{subject}</Segment>
                     Underemne: <Segment style={{ "font-weight": 'normal'}}>{subSubject.text}</Segment>
+
                   </Segment>
                 </Grid.Column>
               </Grid.Row>

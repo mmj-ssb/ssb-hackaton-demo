@@ -26,6 +26,7 @@ class Memphisto extends React.Component {
       noMatches: false,
       readyRelevantStuff: true,
       relevantStuff: {},
+      subject: '',
       subSubject: {},
       subjects: [],
       subjectString: '',
@@ -200,7 +201,7 @@ class Memphisto extends React.Component {
                               const subject = path[1]
 
                               this.setState({
-                                relevantStuff: response.data
+                                relevantStuff: response.data,
                               }, () => {
                                 const subjectUrl = apiUrl + '/' + subject + '/'
                                 const subSubjectUrl = subjectUrl + subSubject + '/'
@@ -217,6 +218,8 @@ class Memphisto extends React.Component {
                                             string = this.state.tables[i].text
                                           }
                                         }
+
+                                        let tableSubject = string
 
                                         string = string.toLowerCase()
                                         string = string.replace(new RegExp('æ', 'g'), 'ae')
@@ -236,7 +239,8 @@ class Memphisto extends React.Component {
 
                                         this.setState({
                                           subjectString: string,
-                                          factPageGuess: guess
+                                          factPageGuess: guess,
+                                          subject: tableSubject
                                         }, () => {
                                           this.setState({readyRelevantStuff: true})
                                         })
@@ -323,7 +327,8 @@ class Memphisto extends React.Component {
                                               subSubject={this.state.subSubject}
                                               factPageGuess={this.state.factPageGuess}
                                               relevant={relevantStuff} />)
-    const statisticsResultPageComp = (<StatisticsResult subjects={this.state.subjects}
+    const statisticsResultPageComp = (<StatisticsResult subject={this.state.subject}
+                                                        subjects={this.state.subjects}
                                                         subSubject={this.state.subSubject}
                                                         factPageGuess={this.state.factPageGuess}
                                                         relevant={relevantStuff} />)
@@ -384,7 +389,9 @@ class Memphisto extends React.Component {
 
             <Button color='teal' icon='car' content='Kjør tekst' onClick={this.fromTextBox} />
 
-          </Form.Field>
+          </Form.Field>{/*
+
+          <Button color='teal' icon='car' content='chk' onClick={this.handleCheckState} />*/}
         </Form>
       </Segment>
     )
