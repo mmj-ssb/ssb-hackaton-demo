@@ -11,13 +11,11 @@ class StatisticsResult extends React.Component {
     console.log(this.props)
     const {relevant, subject, subjects, subSubject, factPageGuess} = this.props
     let relevantStuff = relevant
+
+    let stuff = relevantStuff[0].path.split('/').pop()
     return (
       <Segment basic>
-        {Object.keys(relevantStuff).map((item, index) => {
-          let stuff = relevantStuff[index].path.split('/').pop()
-
-          return (
-            <Grid columns={2} divided>
+        <Grid columns={2} divided>
               <Grid.Row>
                 <Grid.Column width={10}>
                   <Segment color='green' style={{ "font-weight": 'bold'}}>
@@ -70,9 +68,6 @@ class StatisticsResult extends React.Component {
                 </Grid.Column>
               </Grid.Row>
             </Grid>
-          )
-        })
-        }
       </Segment>
     )
   }

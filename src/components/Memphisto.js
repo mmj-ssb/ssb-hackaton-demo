@@ -371,7 +371,6 @@ class Memphisto extends React.Component {
 
         <Form>
           <Form.Field>
-            <label>Legge inn tekst</label>
             <Input placeholder='tekst' name='articleUrl' value={articleUrl}
                    onChange={this.handleInputChange} disabled={!rootReady}
                    action={{
@@ -389,9 +388,8 @@ class Memphisto extends React.Component {
 
             <Button color='teal' icon='car' content='Kjør tekst' onClick={this.fromTextBox} />
 
-          </Form.Field>{/*
-
-          <Button color='teal' icon='car' content='chk' onClick={this.handleCheckState} />*/}
+          </Form.Field>
+          {/*<Button color='teal' icon='car' content='chk' onClick={this.handleCheckState} />*/}
         </Form>
       </Segment>
     )

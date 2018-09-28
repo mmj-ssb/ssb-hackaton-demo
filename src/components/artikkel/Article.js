@@ -146,7 +146,7 @@ class Article extends React.Component {
                 columns={columns}
                 noDataText='No data!'
                 filterable
-                defaultPageSize={30}
+                defaultPageSize={5}
                 previousText='Forrige'
                 nextText='Neste'
                 loadingText='Laster...'
