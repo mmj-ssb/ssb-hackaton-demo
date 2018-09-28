@@ -2,14 +2,14 @@ import React from 'react'
 import axios from 'axios'
 import Article from '../components/artikkel/Article'
 import TableResult from './TableResult'
-import { Button, Input, Segment, Step } from 'semantic-ui-react'
+import { Button, Input, Segment, Step, List } from 'semantic-ui-react'
 import StatisticsResult from "./StatisticsResult";
 
 let Diffbot = require('diffbot').Diffbot
 let diffBot = new Diffbot('12774256cd58c887d773094050451db8')
 
 class Memphisto extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
       rootReady: false,
@@ -22,6 +22,8 @@ class Memphisto extends React.Component {
       countArray: [],
       matches: {},
       matchedWords: [],
+      textBox: '',
+      noMatches: false,
       readyRelevantStuff: true,
       relevantStuff: {},
       subSubject: {},
@@ -39,7 +41,7 @@ class Memphisto extends React.Component {
     this.enableStatsPage = this.enableStatsPage.bind(this);
   }
 
-  enableArticlePage () {
+  enableArticlePage() {
     this.setState({
       isArticlePage: true,
       isTablePage: false,
@@ -47,7 +49,7 @@ class Memphisto extends React.Component {
     });
   }
 
-  enableTablePage () {
+  enableTablePage() {
     this.setState({
       isArticlePage: false,
       isTablePage: true,
@@ -56,7 +58,7 @@ class Memphisto extends React.Component {
     });
   }
 
-  enableStatsPage () {
+  enableStatsPage() {
     this.setState({
       isArticlePage: false,
       isTablePage: false,
@@ -65,7 +67,7 @@ class Memphisto extends React.Component {
     });
   }
 
-  componentDidMount () {
+  componentDidMount() {
     axios.get(apiUrl).then(response => {
       this.setState({tables: response.data}, () => {
         this.setState({rootReady: true})
@@ -81,194 +83,194 @@ class Memphisto extends React.Component {
     this.setState({[event.target.name]: event.target.value})
   }
 
-  handleMemphisto = () => {
-    diffBot.article({uri: this.state.articleUrl}, (error, response) => {
+  handleMemphisto = (text) => {
+    const array = text.split(' ')
+    const trimmedArray = []
+
+    array.forEach(function(word) {
+      let pattern = /([^[a-zA-Z-æøåÆØÅ])+/ig
+      word = word.replace(pattern, '').toLowerCase()
+      trimmedArray.push(word)
+    })
+
+    this.setState({textArray: trimmedArray}, () => {
+      const textArray = this.state.textArray
+      const countArray = []
+
+      textArray.forEach(function(x) {
+        countArray[x] = (countArray[x] || 0) + 1
+      })
+
       this.setState({
-        article: response.objects[0],
-        readyArticle: true
+        countArray: countArray,
+        readyCountArray: true
       }, () => {
-        const array = this.state.article.text.split(' ')
-        const trimmedArray = []
+        for(let i = 0, l = tables.length; i < l; i++) {
+          const url = apiUrl + tables[i]
+          const stateName = tables[i] + 'Variables'
 
-        array.forEach(function (word) {
-          let pattern = /([^[a-zA-Z-æøåÆØÅ])+/ig
-          word = word.replace(pattern, '').toLowerCase()
-          trimmedArray.push(word)
-        })
+          axios.get(url).then(response => {
+            this.setState({
+              [stateName]: response.data.variables
+            }, () => {
+              const majorVariables = []
+              const minorVariables = []
+              const ready = 'ready' + this.upperCaseFirst(stateName)
+              const stateMajorVariables = 'majorVariables' + tables[i]
+              const stateMinorVariables = 'minorVariables' + tables[i]
 
-        this.setState({textArray: trimmedArray}, () => {
-          const textArray = this.state.textArray
-          const countArray = []
+              for(let ii = 0, ll = this.state[stateName].length; ii < ll; ii++) {
+                const text = this.state[stateName][ii].text
 
-          textArray.forEach(function (x) {
-            countArray[x] = (countArray[x] || 0) + 1
-          })
+                majorVariables.push(text.toLowerCase())
 
-          this.setState({
-            countArray: countArray,
-            readyCountArray: true
-          }, () => {
-            for (let i = 0, l = tables.length; i < l; i++) {
-              const url = apiUrl + tables[i]
-              const stateName = tables[i] + 'Variables'
+                for(let iii = 0, lll = this.state[stateName][ii].valueTexts.length; iii < lll; iii++) {
+                  const valueText = this.state[stateName][ii].valueTexts[iii]
 
-              axios.get(url).then(response => {
-                this.setState({
-                  [stateName]: response.data.variables
-                }, () => {
-                  const majorVariables = []
-                  const minorVariables = []
-                  const ready = 'ready' + this.upperCaseFirst(stateName)
-                  const stateMajorVariables = 'majorVariables' + tables[i]
-                  const stateMinorVariables = 'minorVariables' + tables[i]
+                  minorVariables.push(valueText.toLowerCase())
+                }
+              }
 
-                  for (let ii = 0, ll = this.state[stateName].length; ii < ll; ii++) {
-                    const text = this.state[stateName][ii].text
+              this.setState({
+                [ready]: true,
+                [stateMajorVariables]: majorVariables,
+                [stateMinorVariables]: minorVariables
+              }, () => {
+                const stateMatches = 'matches' + tables[i]
+                const matchedWords = this.state.matchedWords.slice()
+                let matches = 0
 
-                    majorVariables.push(text.toLowerCase())
+                Object.keys(this.state.countArray).forEach(key => {
+                  for(let imv = 0, lmv = this.state[stateMajorVariables].length; imv < lmv; imv++) {
+                    if(key === this.state[stateMajorVariables][imv]){
+                      matches++
 
-                    for (let iii = 0, lll = this.state[stateName][ii].valueTexts.length; iii < lll; iii++) {
-                      const valueText = this.state[stateName][ii].valueTexts[iii]
+                      matchedWords.push(key)
 
-                      minorVariables.push(valueText.toLowerCase())
+                      console.log('Fant match (majorVariable): \'' + key + '\' i tabell ' + tables[i])
                     }
                   }
 
-                  this.setState({
-                    [ready]: true,
-                    [stateMajorVariables]: majorVariables,
-                    [stateMinorVariables]: minorVariables
-                  }, () => {
-                    const stateMatches = 'matches' + tables[i]
-                    const matchedWords = this.state.matchedWords.slice()
-                    let matches = 0
+                  for(let inv = 0, lnv = this.state[stateMinorVariables].length; inv < lnv; inv++) {
+                    if(key === this.state[stateMinorVariables][inv]){
+                      matches++
 
-                    Object.keys(this.state.countArray).forEach(key => {
-                      for (let imv = 0, lmv = this.state[stateMajorVariables].length; imv < lmv; imv++) {
-                        if (key === this.state[stateMajorVariables][imv]){
-                          matches++
+                      matchedWords.push(key)
 
-                          matchedWords.push(key)
+                      console.log('Fant match (minorVariable): \'' + key + '\' i tabell ' + tables[i])
+                    }
+                  }
+                })
 
-                          console.log('Fant match (majorVariable): \'' + key + '\' i tabell ' + tables[i])
-                        }
-                      }
-
-                      for (let inv = 0, lnv = this.state[stateMinorVariables].length; inv < lnv; inv++) {
-                        if (key === this.state[stateMinorVariables][inv]){
-                          matches++
-
-                          matchedWords.push(key)
-
-                          console.log('Fant match (minorVariable): \'' + key + '\' i tabell ' + tables[i])
-                        }
-                      }
-                    })
-
+                this.setState({
+                  [stateMatches]: matches,
+                  matchedWords: matchedWords
+                }, () => {
+                  if(i === l - 1){
                     this.setState({
-                      [stateMatches]: matches,
-                      matchedWords: matchedWords
+                      matches: {
+                        ...this.state.matches,
+                        [tables[i]]: matches
+                      }
                     }, () => {
-                      if (i === l - 1){
+                      const sortedMatch = []
+
+                      for(let tableId in this.state.matches) {
+                        sortedMatch.push([tableId, this.state.matches[tableId]])
+                      }
+
+                      sortedMatch.sort((a, b) => {
+                        return b[1] - a[1]
+                      })
+                      if(sortedMatch[0][1] === 0){
                         this.setState({
-                          matches: {
-                            ...this.state.matches,
-                            [tables[i]]: matches
-                          }
-                        }, () => {
-                          const sortedMatch = []
+                          noMatches: true,
+                          readyRelevantStuff: true,
+                          ready: true
+                        })
+                      } else {
+                        this.setState({bestMatch: sortedMatch[0][0]}, () => {
+                          this.setState({ready: true}, () => {
+                            const url = apiUrl + '?query=' + this.state.bestMatch
 
-                          for (let tableId in this.state.matches) {
-                            sortedMatch.push([tableId, this.state.matches[tableId]])
-                          }
+                            axios.get(url).then(response => {
+                              const path = response.data[0].path.split('/')
+                              // const table = path[3]
+                              const subSubject = path[2]
+                              const subject = path[1]
 
-                          sortedMatch.sort((a, b) => {
-                            return b[1] - a[1]
-                          })
+                              this.setState({
+                                relevantStuff: response.data
+                              }, () => {
+                                const subjectUrl = apiUrl + '/' + subject + '/'
+                                const subSubjectUrl = subjectUrl + subSubject + '/'
 
-                          this.setState({bestMatch: sortedMatch[0][0]}, () => {
-                            this.setState({ready: true}, () => {
-                              const url = apiUrl + '?query=' + this.state.bestMatch
+                                axios.get(subSubjectUrl).then(response => {
+                                  this.setState({subSubject: response.data[0]}, () => {
+                                    axios.get(subjectUrl).then(response => {
+                                      this.setState({subjects: response.data}, () => {
+                                        let string = ''
+                                        let guess = ''
 
-                              axios.get(url).then(response => {
-                                const path = response.data[0].path.split('/')
-                                // const table = path[3]
-                                const subSubject = path[2]
-                                const subject = path[1]
+                                        for(let i = 0, l = this.state.tables.length; i < l; i++) {
+                                          if(subject === this.state.tables[i].id){
+                                            string = this.state.tables[i].text
+                                          }
+                                        }
 
-                                this.setState({
-                                  relevantStuff: response.data
-                                }, () => {
-                                  const subjectUrl = apiUrl + '/' + subject + '/'
-                                  const subSubjectUrl = subjectUrl + subSubject + '/'
+                                        string = string.toLowerCase()
+                                        string = string.replace(new RegExp('æ', 'g'), 'ae')
+                                        string = string.replace(new RegExp('ø', 'g'), 'o')
+                                        string = string.replace(new RegExp('å', 'g'), 'aa')
+                                        string = string.replace(/\s/g, '-')
 
-                                  axios.get(subSubjectUrl).then(response => {
-                                    this.setState({subSubject: response.data[0]}, () => {
-                                      axios.get(subjectUrl).then(response => {
-                                        this.setState({subjects: response.data}, () => {
-                                          let string = ''
-                                          let guess = ''
+                                        for(let i = 0, l = this.state.matchedWords.length; i < l; i++) {
+                                          for(let ii = 0, ll = factPages.length; ii < ll; ii++) {
+                                            if(this.state.matchedWords[i].match(factPages[ii])){
+                                              guess = factPageUrls[ii]
 
-                                          for (let i = 0, l = this.state.tables.length; i < l; i++) {
-                                            if (subject === this.state.tables[i].id){
-                                              string = this.state.tables[i].text
+                                              console.log('Fant match til faktaside')
                                             }
                                           }
+                                        }
 
-                                          string = string.toLowerCase()
-                                          string = string.replace(new RegExp('æ', 'g'), 'ae')
-                                          string = string.replace(new RegExp('ø', 'g'), 'o')
-                                          string = string.replace(new RegExp('å', 'g'), 'aa')
-                                          string = string.replace(/\s/g, '-')
-
-                                          for (let i = 0, l = this.state.matchedWords.length; i < l; i++) {
-                                            for (let ii = 0, ll = factPages.length; ii < ll; ii++) {
-                                              if (this.state.matchedWords[i].match(factPages[ii])){
-                                                guess = factPageUrls[ii]
-
-                                                console.log('Fant match til faktaside')
-                                              }
-                                            }
-                                          }
-
-                                          this.setState({
-                                            subjectString: string,
-                                            factPageGuess: guess
-                                          }, () => {
-                                            this.setState({readyRelevantStuff: true})
-                                          })
+                                        this.setState({
+                                          subjectString: string,
+                                          factPageGuess: guess
+                                        }, () => {
+                                          this.setState({readyRelevantStuff: true})
                                         })
-                                      }).catch(error => {
-                                        console.log(error)
                                       })
+                                    }).catch(error => {
+                                      console.log(error)
                                     })
-                                  }).catch(error => {
-                                    console.log(error)
                                   })
+                                }).catch(error => {
+                                  console.log(error)
                                 })
-                              }).catch(error => {
-                                console.log(error)
                               })
+                            }).catch(error => {
+                              console.log(error)
                             })
                           })
                         })
-                      } else {
-                        this.setState({
-                          matches: {
-                            ...this.state.matches,
-                            [tables[i]]: matches
-                          }
-                        })
                       }
                     })
-                  })
+                  } else {
+                    this.setState({
+                      matches: {
+                        ...this.state.matches,
+                        [tables[i]]: matches
+                      }
+                    })
+                  }
                 })
-              }).catch(error => {
-                console.log(error)
               })
-            }
+            })
+          }).catch(error => {
+            console.log(error)
           })
-        })
+        }
       })
     })
   }
@@ -281,15 +283,31 @@ class Memphisto extends React.Component {
     this.setState({articleUrl: url}, () => {
       this.state.readyRelevantStuff = false
       this.enableTablePage()
-      this.handleMemphisto()
+      diffBot.article({uri: url}, (error, response) => {
+        console.log("Response from DiffBot : ", response)
+        if(response !== undefined)
+          this.handleMemphisto(response.objects[0].text)
+      })
     });
   }
 
-  render () {
+  getSearchText = (text) => {
+    this.setState({textBox: text}, () => {
+      this.state.readyRelevantStuff = false
+      this.enableTablePage()
+      this.handleMemphisto(this.state.textBox)
+    });
+  }
+
+
+  render() {
     const {
+      ready, readyArticle, subSubject, subjects, factPageGuess,
       rootReady, articleUrl, bestMatch, readyRelevantStuff, relevantStuff, isArticlePage, isStatsPage, isTablePage
     } = this.state
-    const articlePageComp = (<Article getArticleUrl={this.getArticleUrl}></Article>);
+    const articlePageComp = (<Article getArticleUrl={this.getArticleUrl}
+                                      getSearchText={this.getSearchText}
+                                      rootReady={this.state.rootReady} />);
     const tableResultPageComp = (<TableResult bestMatch={bestMatch}
                                               table={statbankUrl + bestMatch + '/'}
                                               subjects={this.state.subjects}
@@ -303,64 +321,6 @@ class Memphisto extends React.Component {
 
     return (
       <Segment basic>
-        <Input placeholder='Artikkel url' name='articleUrl' value={articleUrl}
-               onChange={this.handleInputChange} disabled={!rootReady}
-               action={{
-                 icon: 'car',
-                 color: 'teal',
-                 onClick: this.handleMemphisto,
-                 content: 'Kjør'
-               }}
-        />
-        {/* <Segment basic loading={!readyRelevantStuff} hidden={!ready}>
-
-          {readyArticle &&
-          <a href={statbankUrl + bestMatch + '/'} target='_blank'>Tabell</a>
-          }
-
-          {readyRelevantStuff && Object.keys(relevantStuff).map((item, index) => {
-            let stuff = relevantStuff[index].path.split('/').pop()
-
-            return (
-              <List key='liste'>
-                <List.Item key='relevant?'>
-                  <a href={ssbUrl + stuff} target='_blank'>Relevant?</a>
-                </List.Item>
-
-                <List.Item key='relatert'>
-                  <a href={statbankListUrl + stuff} target='_blank'>Relaterte tabeller</a>
-                </List.Item>
-
-                <List.Item key='underemne'>
-                  Underemne: {subSubject.text}
-                </List.Item>
-
-                <List.Item key='tilhørende emner'>
-                  Tilhørende emner:
-                  <List.List>
-                    {Object.keys(subjects).map((item, index) => {
-                      return (
-                        <List.Item key={index}>
-                          {subjects[index].text}
-                        </List.Item>
-                      )
-                    })}
-                  </List.List>
-                </List.Item>
-
-                <List.Item key='faktaside'>
-                  <a href={factPageGuess} target='_blank'>Faktaside?</a>
-                  {factPageGuess === '' ? <span style={{color: '#db2828'}}> - Fant ingen dessverre...</span> :
-                    <span style={{color: '#21ba45'}}> - Fant en!</span>}
-                </List.Item>
-              </List>
-            )
-          })
-          }
-
-        </Segment>*/}
-
-        <Button color='pink' content='Sjekk state' onClick={this.handleCheckState} />
         <Step.Group size='large' widths={3}>
           <Step
             active={isArticlePage}
@@ -403,12 +363,16 @@ const apiUrl = 'https://data.ssb.no/api/v0/no/table/'
 
 const statbankUrl = 'https://www.ssb.no/statbank/table/'
 
+const statbankListUrl = 'https://www.ssb.no/statbank/list/'
+
+const ssbUrl = 'https://www.ssb.no/'
+
 const tables = [
   '05678',
   '08402',
   '07459',
   '11418',
-  '10501',
+  // '10501',
   '03013',
   '11555',
   '03024',

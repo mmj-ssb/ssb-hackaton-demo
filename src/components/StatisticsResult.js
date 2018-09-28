@@ -35,7 +35,7 @@ class StatisticsResult extends React.Component {
               <Grid.Row>
                 <Grid.Column width={10}>
                   <Segment color='green' style={{ "font-weight": 'bold'}}>
-                    Underemne: <Segment color='' style={{ "font-weight": 'normal'}}>{subSubject.text}</Segment>
+                    Underemne: <Segment style={{ "font-weight": 'normal'}}>{subSubject.text}</Segment>
                   </Segment>
                 </Grid.Column>
               </Grid.Row>
@@ -43,7 +43,7 @@ class StatisticsResult extends React.Component {
                 <Grid.Column width={10}>
                   <Segment color='green' style={{ "font-weight": 'bold'}}>
                     Tilhørende emner:
-                    <Segment color='' style={{ "font-weight": 'normal'}}>{Object.keys(subjects).map((item, index) => {
+                    <Segment style={{ "fontweight": 'normal'}}>{Object.keys(subjects).map((item, index) => {
                       return (
                         <Grid>
                           <Grid.Row columns={3}>

@@ -11,6 +11,7 @@ class TableResult extends React.Component {
     const {bestMatch, table, relevant} = this.props
 
     if (bestMatch){
+      console.log("Result table: ", table)
       return (
         <Segment basic>
           <iframe style={{width: '100%', height: 700}} src={table}></iframe>
