@@ -152,30 +152,7 @@ class Article extends React.Component {
             </Grid.Column>
           </Grid.Row>
           <Divider horizontal>Or</Divider>
-          <Grid.Row>
-            <Grid.Column>
-              <Form>
-                <Form.Field>
-                  <label>Legge inn tekst</label>
-                  <Input placeholder='tekst' name='articleUrl' value={articleUrl}
-                         onChange={this.handleInputChange} disabled={!rootReady}
-                         action={{
-                           icon: 'car',
-                           color: 'teal',
-                           onClick: this.handleSearch,
-                           content: 'Kjør'
-                         }}
-                  />
 
-                  <TextArea placeholder='Lim inn tekst' name='textBox' value={this.state.textBox}
-                            onChange={this.handleInputChange} readOnly={!rootReady} autoHeight />
-
-                  <Button color='teal' icon='car' content='Kjør tekst' onClick={this.fromTextBox} />
-
-                </Form.Field>
-              </Form>
-            </Grid.Column>
-          </Grid.Row>
         </Grid>
 
       </div>

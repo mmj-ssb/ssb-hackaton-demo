@@ -2,7 +2,7 @@ import React from 'react'
 import axios from 'axios'
 import Article from '../components/artikkel/Article'
 import TableResult from './TableResult'
-import { Button, Input, Segment, Step, List } from 'semantic-ui-react'
+import { Button, Input, Segment, Step, List, TextArea, Form } from 'semantic-ui-react'
 import StatisticsResult from "./StatisticsResult";
 
 let Diffbot = require('diffbot').Diffbot
@@ -279,7 +279,7 @@ class Memphisto extends React.Component {
     console.log(this.state)
   }
 
-  getArticleUrl = (url) => {
+  getArticleUrlFromTable = (url) => {
     this.setState({articleUrl: url}, () => {
       this.state.readyRelevantStuff = false
       this.enableTablePage()
@@ -291,21 +291,31 @@ class Memphisto extends React.Component {
     });
   }
 
-  getSearchText = (text) => {
-    this.setState({textBox: text}, () => {
+  getArticleUrlFromTextBox = () => {
+    this.setState({articleUrl: this.state.articleUrl}, () => {
       this.state.readyRelevantStuff = false
       this.enableTablePage()
-      this.handleMemphisto(this.state.textBox)
+      diffBot.article({uri: this.state.articleUrl}, (error, response) => {
+        console.log("Response from DiffBot : ", response)
+        if(response !== undefined)
+          this.handleMemphisto(response.objects[0].text)
+      })
     });
   }
 
 
+  fromTextBox = () => {
+    this.enableTablePage()
+    this.handleMemphisto(this.state.textBox)
+  }
+
+
   render() {
-    const {
+    const {textBox,
       ready, readyArticle, subSubject, subjects, factPageGuess,
       rootReady, articleUrl, bestMatch, readyRelevantStuff, relevantStuff, isArticlePage, isStatsPage, isTablePage
     } = this.state
-    const articlePageComp = (<Article getArticleUrl={this.getArticleUrl}
+    const articlePageComp = (<Article getArticleUrl={this.getArticleUrlFromTable}
                                       getSearchText={this.getSearchText}
                                       rootReady={this.state.rootReady} />);
     const tableResultPageComp = (<TableResult bestMatch={bestMatch}
@@ -352,6 +362,26 @@ class Memphisto extends React.Component {
           {this.state.isTablePage ? tableResultPageComp : null}
           {this.state.isStatsPage ? statisticsResultPageComp : null}
         </Segment>
+        <Form>
+          <Form.Field>
+            <label>Legge inn tekst</label>
+            <Input placeholder='tekst' name='articleUrl' value={this.state.articleUrl}
+                   onChange={this.handleInputChange} disabled={!rootReady}
+                   action={{
+                     icon: 'car',
+                     color: 'teal',
+                     onClick: this.getArticleUrlFromTextBox,
+                     content: 'Kjør'
+                   }}
+            />
+
+            <TextArea placeholder='Lim inn tekst' name='textBox' value={this.state.textBox}
+                      onChange={this.handleInputChange} readOnly={!rootReady} autoHeight />
+
+            <Button color='teal' icon='car' content='Kjør tekst' onClick={this.fromTextBox} />
+
+          </Form.Field>
+        </Form>
       </Segment>
     )
   }
