@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactTable from 'react-table'
 import 'react-table/react-table.css'
-import { List } from 'semantic-ui-react'
+import { List, Icon } from 'semantic-ui-react'
 
 const CONST_ARTICLE_LIST = [
   "https://www.vg.no/nyheter/innenriks/i/jqB1z/stortingspolitikerne-gir-seg-selv-21-674-kroner-ekstra-i-loenn",
@@ -118,7 +118,7 @@ class Article extends React.Component {
     return (
       <List>
         {articleList.map((article) =>
-          <List.Item key={article.id} value={article.article} style={{icon:'newspaper', cursor:'pointer'}}
+          <List.Item icon='users' key={article.id} value={article.article} style={{cursor:'pointer'}}
                      onClick={(e, {value}) =>
             this.handleClicked(e, value)}> {article.article} </List.Item>
         )}
