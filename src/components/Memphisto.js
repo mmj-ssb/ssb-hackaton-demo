@@ -315,6 +315,7 @@ class Memphisto extends React.Component {
       ready, readyArticle, subSubject, subjects, factPageGuess,
       rootReady, articleUrl, bestMatch, readyRelevantStuff, relevantStuff, isArticlePage, isStatsPage, isTablePage
     } = this.state
+    console.log(this.state.matches)
     const articlePageComp = (<Article getArticleUrl={this.getArticleUrlFromTable}
                                       getSearchText={this.getSearchText}
                                       rootReady={this.state.rootReady} />);
@@ -365,7 +366,7 @@ class Memphisto extends React.Component {
         <Form>
           <Form.Field>
             <label>Legge inn tekst</label>
-            <Input placeholder='tekst' name='articleUrl' value={this.state.articleUrl}
+            <Input placeholder='tekst' name='articleUrl' value={articleUrl}
                    onChange={this.handleInputChange} disabled={!rootReady}
                    action={{
                      icon: 'car',
@@ -402,7 +403,7 @@ const tables = [
   '08402',
   '07459',
   '11418',
-  // '10501',
+  '09817',
   '03013',
   '11555',
   '03024',

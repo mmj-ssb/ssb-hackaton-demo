@@ -15,18 +15,7 @@ const CONST_ARTICLE_LIST = [
   "https://www.digi.no/artikler/sa-mye-tjener-it-ansatte/320713",
   "https://www.nettavisen.no/na24/dette-er-den-nye-norske-lnnen/3423308467.html",
   "https://www.an.no/nyheter/norge/folketall/oppsiktsvekkende-tall-om-norges-befolkning/s/5-4-705385",
-  "https://www.nettavisen.no/nyheter/befolkningen-i-norge-mer-enn-doblet-pa-118-ar-men-hvor-mange-flere-barn-har-det-blitt/3423419009.html",
-  "https://www.nrk.no/sognogfjordane/svakaste-veksten-pa-13-ar-_-mindre-innvandring-og-faerre-fodslar-1.13930811",
-  "https://kommunal-rapport.no/okonomi/2018/02/199-kommuner-mister-innbyggere",
-  "https://www.aftenposten.no/osloby/i/xnrwn/Den-kraftige-befolkningsveksten-i-Oslo-har-stanset-opp",
-  "https://www.aftenposten.no/familieogoppvekst/Navnestatistikk-Dette-er-de-mest-populare-navnene-na-11523b.html",
-  "https://www.ba.no/2017-navnene/politikk/oslo/njastad-skremmende-at-muhammed-er-mest-populart-i-oslo/s/5-8-729955",
-  "https://www.aftenbladet.no/familieogoppvekst/Pa-jakt-etter-et-sjeldent-navn-11568b.html",
-  "https://www.nrk.no/kultur/historiske-navn-som-edevart_-bolette-og-bredine-lever-videre-i-_det-skjulte_-1.14009427",
-  "https://www.abcnyheter.no/helse-og-livsstil/livet/2017/11/17/195347712/dette-jentenavnet-er-verdens-mest-populaere",
-  "https://www.aftenbladet.no/familieogoppvekst/Noen-navn-klarer-ikke-foreldre-la-vare-a-bruke-selv-om-det-er-pa-topplistene-William-kan-vare-et-slikt-et-9768b.html",
-  "https://www.dagbladet.no/kultur/skam-navn-topper-navnelista/66901476",
-  "https://www.aftenposten.no/osloby/i/2OQKr/Se-hvilke-barnenavn-som-er-mest-populare-i-din-bydel"
+  "https://www.nettavisen.no/nyheter/befolkningen-i-norge-mer-enn-doblet-pa-118-ar-men-hvor-mange-flere-barn-har-det-blitt/3423419009.html"
 ]
 
 class Article extends React.Component {
@@ -99,21 +88,7 @@ class Article extends React.Component {
     const columns = [{
       Header: 'Article Link',
       accessor: ''
-    },
-      {
-        Header: 'Article Url',
-        Cell: row => (
-          <div
-            style={{}}
-          >
-            <div
-              style={{
-                borderRadius: '2px'
-              }}
-            />
-          </div>
-        )
-      }]
+    }]
 
     return (
       <div>
