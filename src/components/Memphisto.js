@@ -386,6 +386,8 @@ class Memphisto extends React.Component {
 
           </Form.Field>
           {/*<Button color='teal' icon='car' content='chk' onClick={this.handleCheckState} />*/}
+
+          <Divider horizontal>Artikkelliste</Divider>
         </Form>
         <Segment loading={!readyRelevantStuff}>
           {this.state.isArticlePage ? articlePageComp : null}
