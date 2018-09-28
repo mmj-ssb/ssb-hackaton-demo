@@ -2,7 +2,7 @@ import React from 'react'
 import axios from 'axios'
 import Article from '../components/artikkel/Article'
 import TableResult from './TableResult'
-import { Button, Input, Segment, Step, TextArea, Form } from 'semantic-ui-react'
+import { Button, Input, Segment, Step, TextArea, Form, Divider, Grid } from 'semantic-ui-react'
 import StatisticsResult from "./StatisticsResult";
 
 let Diffbot = require('diffbot').Diffbot
@@ -361,6 +361,9 @@ class Memphisto extends React.Component {
           {this.state.isTablePage ? tableResultPageComp : null}
           {this.state.isStatsPage ? statisticsResultPageComp : null}
         </Segment>
+
+        <Divider horizontal>Skriv inn url</Divider>
+
         <Form>
           <Form.Field>
             <label>Legge inn tekst</label>
@@ -373,7 +376,9 @@ class Memphisto extends React.Component {
                      content: 'Kjør'
                    }}
             />
-
+          </Form.Field>
+          <Divider horizontal>Skriv inn tekst</Divider>
+          <Form.Field>
             <TextArea placeholder='Lim inn tekst' name='textBox' value={this.state.textBox}
                       onChange={this.handleInputChange} readOnly={!rootReady} autoHeight />
 
