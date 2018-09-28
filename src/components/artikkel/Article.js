@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactTable from 'react-table'
 import 'react-table/react-table.css'
-import { Button, Grid, Image, Divider, Input, Segment, Form, TextArea } from 'semantic-ui-react'
+import { Grid, Divider } from 'semantic-ui-react'
 
 const CONST_ARTICLE_LIST = [
   "https://www.vg.no/nyheter/innenriks/i/jqB1z/stortingspolitikerne-gir-seg-selv-21-674-kroner-ekstra-i-loenn",

@@ -2,7 +2,7 @@ import React from 'react'
 import axios from 'axios'
 import Article from '../components/artikkel/Article'
 import TableResult from './TableResult'
-import { Button, Input, Segment, Step, List, TextArea, Form } from 'semantic-ui-react'
+import { Button, Input, Segment, Step, TextArea, Form } from 'semantic-ui-react'
 import StatisticsResult from "./StatisticsResult";
 
 let Diffbot = require('diffbot').Diffbot
@@ -311,9 +311,7 @@ class Memphisto extends React.Component {
 
 
   render() {
-    const {textBox,
-      ready, readyArticle, subSubject, subjects, factPageGuess,
-      rootReady, articleUrl, bestMatch, readyRelevantStuff, relevantStuff, isArticlePage, isStatsPage, isTablePage
+    const {rootReady, articleUrl, bestMatch, readyRelevantStuff, relevantStuff, isArticlePage, isStatsPage, isTablePage
     } = this.state
     console.log(this.state.matches)
     const articlePageComp = (<Article getArticleUrl={this.getArticleUrlFromTable}
