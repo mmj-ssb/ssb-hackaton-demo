@@ -1,8 +1,7 @@
 import React from 'react'
 import ReactTable from 'react-table'
 import 'react-table/react-table.css'
-import { List, Icon } from 'semantic-ui-react'
-import { Button, Grid, Image, Divider, Input, Segment, Form, TextArea } from 'semantic-ui-react'
+import { List, Icon, Button, Grid, Image, Divider, Input, Segment, Form, TextArea } from 'semantic-ui-react'
 
 const CONST_ARTICLE_LIST = [
   "https://www.vg.no/nyheter/innenriks/i/jqB1z/stortingspolitikerne-gir-seg-selv-21-674-kroner-ekstra-i-loenn",
@@ -68,7 +67,8 @@ class Article extends React.Component {
       loading: false,
       articleOpen: false,
       articleUrl: '',
-      textBox: ''
+      textBox: '',
+      listReady: false
     }
 
     this.getStatisticsTable = this.getStatisticsTable.bind(this)
@@ -100,14 +100,13 @@ class Article extends React.Component {
   }
 
   componentWillMount () {
-    this.setState(prevState => ({
-      articles: [...prevState.articles, CONST_ARTICLE_LIST],
-      articlesList: [...prevState.articlesList, CONST_ARTICLE_LIST_2]
-    }))
+    this.setState({
+      articles: CONST_ARTICLE_LIST,
+      articlesList: CONST_ARTICLE_LIST_2,
+      listReady: true
+    })
   }
 
-  selectArticle (e, state, column, rowInfo, instance) {
-    /*this.showArticle(true)*/
   selectArticle(e, state, column, rowInfo, instance) {
     this.setState({
       loading: true
@@ -135,7 +134,6 @@ class Article extends React.Component {
     })
   }
 
-  getStatisticsTable () {
   getStatisticsTable() {
     this.props.getArticleUrl(this.state.selectedArticle)
   }
@@ -148,25 +146,25 @@ class Article extends React.Component {
   }
 
   list(){
-    const articleList = CONST_ARTICLE_LIST_2
+    const articleList = this.state.articlesList //CONST_ARTICLE_LIST_2
     return (
       <List>
-        {articleList.map((article) =>
-          <List.Item icon='users' key={article.id} value={article.article} style={{cursor:'pointer'}}
-                     onClick={(e, {value}) =>
-            this.handleClicked(e, value)}> {article.article} </List.Item>
+        {articleList.map((article, index) =>
+          <List.Item icon='newspaper' key={index} style={{cursor:'pointer'}}
+                     content={article.article} onClick={(e, {value=article.article}) =>
+            this.handleClicked(e, value)}/>
         )}
       </List>
     )
   }
 
-  render () {
-    const articles = this.state.articles[0]
 
   render() {
     const articles = this.state.articles[0]
-    const {articleUrl} = this.state
-    const {rootReady} = this.props
+
+
+    //const {articleUrl} = this.state
+    //const {rootReady} = this.props
     const columns = [{
       Header: 'Article Link',
       accessor: ''
@@ -188,9 +186,8 @@ class Article extends React.Component {
 
     return (
       <div>
-        {this.list()}
-        {/*
-        <ReactTable
+        {this.state.listReady && this.list()}
+{/*        <ReactTable
           data={articles}
           columns={columns}
           noDataText='No data!'
@@ -218,8 +215,7 @@ class Article extends React.Component {
               }
             }
           }}
-        />
-        */}
+        />*/}
         {/* <Divider horizontal>Article Content</Divider>
         <Segment loading={loading}><a>{this.state.selectedArticle}</a>
         </Segment>
@@ -233,6 +229,7 @@ class Article extends React.Component {
         {/* <ArticleModal open={this.state.articleOpen}
                       selectedArticle={this.state.selectedArticle}
                       getStatistics={this.getStatisticsTable}/>*/}
+        {/*
         <Grid columns='one' divided>
           <Grid.Row>
             <Grid.Column>
@@ -270,7 +267,7 @@ class Article extends React.Component {
           <Divider horizontal>Or</Divider>
 
         </Grid>
-
+        */}
       </div>
 
     )
